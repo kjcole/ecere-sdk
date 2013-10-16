@@ -1017,7 +1017,7 @@ class IDEWorkSpace : Window
       };
       MenuItem projectAddItem
       {
-         projectMenu, $"Add project to workspace...", a, Key { a, true, true };
+         projectMenu, $"Add project to workspace...", a, Key { a, true, true, true };
          bitmap = { ":actions/projAdd.png" };
          disabled = true;
          bool NotifySelect(MenuItem selection, Modifiers mods)
