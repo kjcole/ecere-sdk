@@ -3515,6 +3515,8 @@ private:
          }
       }
       mouseMove = false;
+      UpdateCaretPosition(false); // when NotifyCaretMove is called through UpdateCaretPosition from OnLeftButtonDown the deselection
+                                  // is not yet apparent or something? this fixes it but there might be a better fix
       // Return false because DataBoxes automatically set EditBox editor's clickThrough to true for MouseMove events
       // ( for tool tips -- see 95ee4962c4c7bc3fe0a04aa6a4f98cacada40884)
       return false;
