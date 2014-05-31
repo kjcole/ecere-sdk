@@ -2104,7 +2104,7 @@ private:
 
       bool eC_Debug = mode.eC_ToolsDebug;
       bool singleProjectOnlyNode = onlyNodes && onlyNodes.count == 1 && onlyNodes[0].type == project;
-      int numJobs = compiler.numJobs;
+      int numJobs = ide.toolBar.forceSingleJob.checked == true ? 1 : compiler.numJobs;
       char command[MAX_F_STRING*4];
       char * compilerName = CopyString(compiler.name);
       Map<String, NameCollisionInfo> cfgNameCollisions;

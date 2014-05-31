@@ -357,6 +357,10 @@ class IDEToolbar : ToolBar
       }
    };
 
+   Window spacer65 { this, size = { 4 } };
+
+   Button forceSingleJob { this, text = $"Force Single Job Compiling", isCheckbox = true; };
+
    Window spacer7 { this, size = { 4 } };
 
    void IDEToolbar()
