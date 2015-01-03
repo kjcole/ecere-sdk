@@ -44,6 +44,19 @@ import "about"
 
 import "FileSystemIterator"
 
+class ImportFolderProjectsFSI : NormalFileSystemIterator
+{
+   bool noParsing;
+   char selfProjectPath[MAX_LOCATION];
+   extensions = ProjectExtension;
+   bool OnFile(const char * filePath)
+   {
+      if(fstrcmp(filePath, selfProjectPath))
+         ide.OpenFile(filePath, false, true, ProjectExtension, no, add, noParsing);
+      return true;
+   }
+}
+
 AVLTree<const String> binaryDocExt
 { [
    "wav", "mp3", "flac", "ogg",
@@ -153,6 +166,7 @@ static Array<FileFilter> findInFilesFileFilters
    { $"All files", null }
 ] };
 
+FileDialog importFolderProjectsDialog { autoCreate = false, type = selectDir, text = $"Import Folder Projects" };
 FileDialog ideFileDialog
 {
    type = multiOpen, text = $"Open";
@@ -1026,6 +1040,32 @@ class IDEWorkSpace : Window
                }
                else
                   break;
+            }
+            return true;
+         }
+      };
+      MenuItem projectImportAddItem
+      {
+         projectMenu, $"Import projects into workspace...", a, Key { a, true, true };
+         disabled = true;
+         bool NotifySelect(MenuItem selection, Modifiers mods)
+         {
+            char path[MAX_LOCATION];
+            FileDialog fileDialog = importFolderProjectsDialog;
+            fileDialog.master = parent;
+            path[0] = '\0';
+            StripLastDirectory(path, ide.workspace.workspaceDir);
+            MakeSystemPath(path);
+            fileDialog.currentDirectory = path;
+            fileDialog.filePath = path;
+            if(fileDialog.Modal() == ok)
+            {
+               ImportFolderProjectsFSI fsi { noParsing = mods.ctrl && mods.shift };
+               ide.project.topNode.GetFullFilePath(fsi.selfProjectPath, true, true);
+               MakeSystemPath(fsi.selfProjectPath);
+               PrintLn("self: ", fsi.selfProjectPath);
+               fsi.Iterate(fileDialog.filePath);
+               delete fsi;
             }
             return true;
          }
@@ -2121,6 +2161,7 @@ class IDEWorkSpace : Window
       bool unavailable = !project;
 
       projectAddItem.disabled             = unavailable;
+      projectImportAddItem.disabled       = unavailable;
       toolBar.buttonAddProject.disabled   = unavailable;
 
       projectSettingsItem.disabled        = unavailable;
