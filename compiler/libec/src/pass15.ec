@@ -7435,16 +7435,20 @@ static bool ResolveIdWithClass(Expression exp, Class _class, bool skipIDClassChe
 
 static GlobalData ScanGlobalData(NameSpace nameSpace, char * name)
 {
-   BinaryTree * tree = &nameSpace.functions;
-   GlobalData data = (GlobalData)tree->FindString(name);
-   NameSpace * child;
-   if(!data)
+   GlobalData data = null;
+   if(nameSpace)
    {
-      for(child = (NameSpace *)nameSpace.nameSpaces.first; child; child = (NameSpace *)((BTNode)child).next)
+      BinaryTree * tree = &nameSpace.functions;
+      data = (GlobalData)tree->FindString(name);
+      NameSpace * child;
+      if(!data)
       {
-         data = ScanGlobalData(child, name);
-         if(data)
-            break;
+         for(child = (NameSpace *)nameSpace.nameSpaces.first; child; child = (NameSpace *)((BTNode)child).next)
+         {
+            data = ScanGlobalData(child, name);
+            if(data)
+               break;
+         }
       }
    }
    return data;
