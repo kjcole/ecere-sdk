@@ -633,6 +633,7 @@ endif
 ifneq ($(ECERE_AUDIO),n)
 	$(call cp,$(OBJBINDIR)$(LP)EcereAudio$(SO),"$(DESTLIBDIR)/")
 endif
+	$(call cp,$(OBJBINDIR)ecere-ide$(E),"$(BINDIR)/ide$(E)")
 	$(call cp,$(OBJBINDIR)ecere-ide$(E),"$(BINDIR)/")
 	$(call cp,$(OBJBINDIR)ear$(E),"$(BINDIR)/")
 	$(call cp,$(OBJBINDIR)ecc$(E),"$(BINDIR)/")
