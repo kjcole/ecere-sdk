@@ -1,0 +1,132 @@
+{
+   name = "Default",
+   readOnly = true,
+   targetPlatform = win32,
+   numJobs = 11,
+   makeCommand = "mingw32-make",
+   ecpCommand = "ecp",
+   eccCommand = "ecc",
+   ecsCommand = "ecs",
+   earCommand = "ear",
+   cppCommand = "gcc",
+   ccCommand = "gcc",
+   cxxCommand = "g++",
+   arCommand = "ar",
+   includeDirs = [
+      "$(ECERE_SDK_SRC)/deps/libpng-1.6.12",
+      "$(ECERE_SDK_SRC)/deps/jpeg-9a",
+      "$(ECERE_SDK_SRC)/deps/zlib-1.2.8",
+      "$(ECERE_SDK_SRC)/eda/drivers/sqlite",
+      "$(GNOSIS2_SRC)/deps/tiff-4.0.3/libtiff",
+      "$(GNOSIS2_SRC)/deps/libgeotiff-1.4.1",
+      "$(GNOSIS2_SRC)/deps/libgeotiff-1.4.1/libxtiff",
+      "$(GNOSIS2_SRC)/disabled/deps/libgeotiff-1.3.0/include",
+      "$(GNOSIS2_SRC)/deps/jasper-1.900.1/src/libjasper/include",
+      "$(GNOSIS2_SRC)/deps/proj-4.8.0/src",
+      "$(GLFW2_SRC)/include",
+      "$(GLFW3_SRC)/include",
+      "$(SDL1_SRC)/SDL-devel-1.2.15-mingw32/include",
+      "$(SDL2_SRC)/SDL2-devel-2.0.3-mingw/x86_64-w64-mingw32/include"
+   ],
+   libraryDirs = [
+      "$(ECERE_SDK_SRC)/deps/zlib-1.2.8/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/deps/libpng-1.6.12/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/deps/libungif-4.1.1/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/deps/jpeg-9a/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/deps/freetype-2.3.12/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/deps/libffi-3.0.11/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/vanilla.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/vanillaDebug.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/static.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/staticDebug.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/wsms.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/eda/libeda/obj/static.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/eda/libeda/obj/staticDebug.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/ecere/obj/staticGLES.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK_SRC)/eda/drivers/sqlite/obj/static.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(ECERE_SDK)/bin",
+      "$(ECERE_SDK_32)/bin",
+      "$(ECERE_SDK)/lib",
+      "$(ECERE_SDK_32)/lib",
+      "$(GNOSIS2_SRC)/deps/proj-4.8.0/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/tiff-4.0.3/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/netcdf-4.0.1/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/hdf5-1.8.3/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/szip-2.1/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/jasper-1.900.1/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/disabled/deps/libgeotiff-1.3.0/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GNOSIS2_SRC)/deps/libgeotiff-1.4.1/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(GLFW2_SRC)/lib/win32",
+      "$(GLFW3_SRC)/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(OPENSSL_LIB_DIR)",
+      "$(OPENSSL_BIN_DIR)",
+      "$(ECERE_SDK_SRC)/ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)",
+      "$(EDE_SRC)/libede/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)"
+   ],
+   executableDirs = [
+      "$(ECERE_SDK)/bin",
+      "$(ECERE_SDK_32)/bin",
+      "$(ECERE_SDK)/upx/bin",
+      "$(ECERE_SDK)/tdm/bin",
+      "$(ECERE_SDK_32)/tdm/bin",
+      "C:/Portables/Libs",
+      "$(EDE_SRC)/libede/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)"
+   ],
+   environmentVars = [
+      {
+         name = "ECERE_SDK",
+         string = "C:\\Program Files\\Ecere SDK"
+      },
+      {
+         name = "ECERE_SDK_32",
+         string = "C:\\Program Files (x86)\\Ecere SDK"
+      },
+      {
+         name = "ECERE_SDK_SRC",
+         string = "D:\\c\\e\\e"
+      },
+      {
+         name = "GNOSIS2_SRC",
+         string = "D:\\c\\e\\m\\s\\gnosis2"
+      },
+      {
+         name = "GNOSIS_DATA_DIR",
+         string = "C:\\Users\\Redj\\GnosIS Cartographer"
+      },
+      {
+         name = "GLFW2_SRC",
+         string = "E:\\c\\s\\glfw\\git\\glfw2"
+      },
+      {
+         name = "GLFW3_SRC",
+         string = "E:\\c\\s\\glfw\\git\\glfw3"
+      },
+      {
+         name = "SDL1_SRC",
+         string = "E:\\c\\s\\sdl\\sdl1"
+      },
+      {
+         name = "SDL2_SRC",
+         string = "E:\\c\\s\\sdl\\sdl2"
+      },
+      {
+         name = "OPENSSL_CONF_32",
+         string = "C:\\Progs32\\OpenSSL\\bin\\openssl.cfg"
+      },
+      {
+         name = "OPENSSL_CONF_64",
+         string = "C:\\sw\\OpenSSL-Win64\\bin\\openssl.cfg"
+      },
+      {
+         name = "OPENSSL_CONF",
+         string = "$(if $(findstring 32,$(ARCH)),$(OPENSSL_CONF_32),$(OPENSSL_CONF_64))"
+      },
+      {
+         name = "EDE_SRC",
+         string = "E:\\s\\c\\e\\p\\ede"
+      }
+   ],
+   cxxFlags = [
+      "-std=c++11"
+   ]
+}

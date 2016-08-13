@@ -1,0 +1,189 @@
+{
+   docDir = "D:/c/e/eee/ecere-sdk/doc",
+   ideFileDialogLocation = "D:/t/e-tmp-b-compare/ecere/src/gui/controls",
+   ideProjectFileDialogLocation = "D:/c/e",
+   showLineNumbers = true,
+   displayDriver = "Default",
+   compilerConfigsDir = "D:/c/.ecereIDE",
+   language = "",
+   codeEditorFont = "Courier New",
+   codeEditorFontSize = 12,
+   showFixedPitchFontsOnly = true,
+   colorSchemes = [
+      {
+         name = "Blueish",
+         selectionColor = 0x00FFFFE0,
+         selectionText = 0x001E2832,
+         viewsBackground = 0x001E2832,
+         viewsText = 0x00D3D3D3,
+         outputBackground = 0x00000000,
+         outputText = 0x00D3D3D3,
+         projectViewBackground = 0x001E2832,
+         projectViewText = 0x00D3D3D3,
+         codeEditorBG = 0x00153653,
+         codeEditorFG = 0x00FFFFFF,
+         marginColor = 0x00303030,
+         selectedMarginColor = 0x00404040,
+         lineNumbersColor = 0x00939395,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x00FFD380,
+            charLiteralColor = 0x0089DE00,
+            stringLiteralColor = 0x00ADD8E6,
+            preprocessorColor = 0x00009200,
+            numberColor = 0x00FFFF00,
+            keywordColors = [
+               0x0000FF00,
+               0x0000FF00
+            ]
+         }
+      },
+      {
+         name = "Classic Dark",
+         selectionColor = 0x00FFFFE0,
+         selectionText = 0x001E2832,
+         viewsBackground = 0x001E2832,
+         viewsText = 0x00D3D3D3,
+         outputBackground = 0x00000000,
+         outputText = 0x00D3D3D3,
+         projectViewBackground = 0x001E2832,
+         projectViewText = 0x00D3D3D3,
+         codeEditorBG = 0x00000000,
+         codeEditorFG = 0x00FFFFF0,
+         marginColor = 0x00181818,
+         selectedMarginColor = 0x00404040,
+         lineNumbersColor = 0x00A0A0A0,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x007D7D7D,
+            charLiteralColor = 0x00F532F5,
+            stringLiteralColor = 0x00F532F5,
+            preprocessorColor = 0x0078DC8C,
+            numberColor = 0x0000C0C0,
+            keywordColors = [
+               0x0087CEEB,
+               0x0087CEEB
+            ]
+         }
+      },
+      {
+         name = "Classic Light",
+         selectionColor = 0x000A246A,
+         selectionText = 0x00FFFFFF,
+         viewsBackground = 0x00FFFFFF,
+         viewsText = 0x00000000,
+         outputBackground = 0x00FFFFFF,
+         outputText = 0x00000000,
+         projectViewBackground = 0x00FFFFFF,
+         projectViewText = 0x00000000,
+         codeEditorBG = 0x00FFFFFF,
+         codeEditorFG = 0x00000000,
+         marginColor = 0x00E6E6E6,
+         selectedMarginColor = 0x00C8C8C8,
+         lineNumbersColor = 0x003C3C3C,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x00696969,
+            charLiteralColor = 0x00DC143C,
+            stringLiteralColor = 0x00DC143C,
+            preprocessorColor = 0x00008000,
+            numberColor = 0x00008080,
+            keywordColors = [
+               0x000000FF,
+               0x000000FF
+            ]
+         }
+      },
+      {
+         name = "Green",
+         selectionColor = 0x00FFFFE0,
+         selectionText = 0x001E2832,
+         viewsBackground = 0x001E2832,
+         viewsText = 0x00D3D3D3,
+         outputBackground = 0x00000000,
+         outputText = 0x00D3D3D3,
+         projectViewBackground = 0x001E2832,
+         projectViewText = 0x00D3D3D3,
+         codeEditorBG = 0x00000000,
+         codeEditorFG = 0x00FFFFF0,
+         marginColor = 0x00001100,
+         selectedMarginColor = 0x00002200,
+         lineNumbersColor = 0x0000FF00,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x00008C00,
+            charLiteralColor = 0x0089DE00,
+            stringLiteralColor = 0x0089DE00,
+            preprocessorColor = 0x0078DC8C,
+            numberColor = 0x0008ED8D,
+            keywordColors = [
+               0x0000E09D,
+               0x0000E09D
+            ]
+         }
+      },
+      {
+         name = "Gray & Orange",
+         selectionColor = 0x00FFFFE0,
+         selectionText = 0x001E2832,
+         viewsBackground = 0x001E2832,
+         viewsText = 0x00D3D3D3,
+         outputBackground = 0x00000000,
+         outputText = 0x00D3D3D3,
+         projectViewBackground = 0x001E2832,
+         projectViewText = 0x00D3D3D3,
+         codeEditorBG = 0x00202020,
+         codeEditorFG = 0x00E2E2E5,
+         marginColor = 0x00303030,
+         selectedMarginColor = 0x00404040,
+         lineNumbersColor = 0x00939395,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x005F5F5F,
+            charLiteralColor = 0x0089DE00,
+            stringLiteralColor = 0x00707070,
+            preprocessorColor = 0x00FAF4C6,
+            numberColor = 0x00FF9800,
+            keywordColors = [
+               0x00FF9800,
+               0x00FF9800
+            ]
+         }
+      },
+      {
+         name = "Chosen Dark",
+         selectionColor = 0x00FFFFE0,
+         selectionText = 0x001E2832,
+         viewsBackground = 0x001E2832,
+         viewsText = 0x00D3D3D3,
+         outputBackground = 0x00000000,
+         outputText = 0x00D3D3D3,
+         projectViewBackground = 0x001E2832,
+         projectViewText = 0x00D3D3D3,
+         codeEditorBG = 0x00000000,
+         codeEditorFG = 0x00FFFFF0,
+         marginColor = 0x00181818,
+         selectedMarginColor = 0x00404040,
+         lineNumbersColor = 0x00A0A0A0,
+         sheetSelectionColor = 0x00AADCFF,
+         sheetSelectionText = 0x00000000,
+         syntaxColors = {
+            commentColor = 0x007D7D7D,
+            charLiteralColor = 0x00F532F5,
+            stringLiteralColor = 0x00F532F5,
+            preprocessorColor = 0x0078DC8C,
+            numberColor = 0x0000C0C0,
+            keywordColors = [
+               0x0087CEEB,
+               0x0087CEEB
+            ]
+         }
+      }
+   ],
+   activeColorScheme = "Gray & Orange"
+}

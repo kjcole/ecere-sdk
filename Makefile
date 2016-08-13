@@ -1,4 +1,4 @@
-.PHONY: all clean realclean distclean emptyoutput prepinstall actualinstall install copyonlyinstall uninstall troubleshoot outputdirs bootstrap deps ecere ecerecom ecerevanilla ear compiler prepbinaries epj2make bgen bindingsgen bindings ide documentor eda prepcodeguard codeguard fixprecompile cleantarget pots installer regenbootstrap updatebootstrap update_ecere update_libec update_ecp update_ecc update_ecs ecereaudio
+.PHONY: all clean realclean distclean emptyoutput prepinstall actualinstall install copyonlyinstall uninstall troubleshoot outputdirs bootstrap deps ecere ecerecom ecerevanilla ear compiler prepbinaries epj2make bgen bindingsgen bindings ide documentor eda prepcodeguard codeguard fixprecompile cleantarget pots installer regenbootstrap updatebootstrap update_ecere update_libec update_ecp update_ecc update_ecs ecereaudio portable
 ifneq ($(V),1)
 .SILENT:
 endif
@@ -163,6 +163,11 @@ endif
 
 endif
 
+ifndef ECERE_PORTABLE_NAME
+ECERE_PORTABLE_NAME := default
+endif
+PORTABLEOBJDIR := obj$(OBJALT)/$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/portable/$(ECERE_PORTABLE_NAME)/
+
 OBJDIR := obj$(OBJALT)/
 OBJBINDIR := $(OBJDIR)$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/bin/
 OBJLIBDIR := $(OBJDIR)$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/lib/
@@ -172,6 +177,84 @@ XOBJLIBDIR := $(OBJDIR)$(HOST_PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/lib/
 
 all: prepbinaries ide epj2make bgen documentor eda codeguard ecereaudio
 	@$(call echo,The Ecere SDK is fully built.)
+
+portable: prepinstall
+	$(call mkdir,$(PORTABLEOBJDIR))
+	$(call mkdir,$(PORTABLEOBJDIR)EcereIDE/)
+	$(call mkdir,$(PORTABLEOBJDIR)EcereIDE/compilerConfigs/)
+
+ifdef WINDOWS_TARGET
+	$(call cp,ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SO),$(PORTABLEOBJDIR))
+	$(call cp,ecere/obj/ecereCOM.release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecereCOM$(SO),$(PORTABLEOBJDIR))
+	$(call cp,compiler/libec/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ec$(SO),$(PORTABLEOBJDIR))
+	$(call cp,eda/libeda/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDA$(SO),$(PORTABLEOBJDIR))
+	$(call cp,eda/drivers/sqlite/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLite$(SO),$(PORTABLEOBJDIR))
+ifneq ($(ECERE_AUDIO),n)
+	$(call cp,audio/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EcereAudio$(SO),$(PORTABLEOBJDIR))
+endif
+ifdef EDASQLiteCipher
+	$(call cp,eda/drivers/sqliteCipher/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLiteCipher$(SO),$(PORTABLEOBJDIR))
+endif
+endif
+ifdef LINUX_TARGET
+	$(call cp,ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SOV),$(PORTABLEOBJDIR))
+	$(call cp,ecere/obj/ecereCOM.release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecereCOM$(SOV),$(PORTABLEOBJDIR))
+	$(call cp,compiler/libec/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ec$(SOV),$(PORTABLEOBJDIR))
+	$(call cp,eda/libeda/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDA$(SOV),$(PORTABLEOBJDIR))
+	$(call cp,eda/drivers/sqlite/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLite$(SOV),$(PORTABLEOBJDIR))
+ifneq ($(ECERE_AUDIO),n)
+	$(call cp,audio/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EcereAudio$(SOV),$(PORTABLEOBJDIR))
+endif
+ifdef EDASQLiteCipher
+	$(call cp,eda/drivers/sqliteCipher/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLiteCipher$(SOV),$(PORTABLEOBJDIR))
+endif
+	ln -sf $(LP)ecere$(SOV) $(PORTABLEOBJDIR)$(LP)ecere$(SO).0
+	ln -sf $(LP)ecereCOM$(SOV) $(PORTABLEOBJDIR)$(LP)ecereCOM$(SO).0
+	ln -sf $(LP)ec$(SOV) $(PORTABLEOBJDIR)$(LP)ec$(SO).0
+	ln -sf $(LP)EDA$(SOV) $(PORTABLEOBJDIR)$(LP)EDA$(SO).0
+	ln -sf $(LP)EDASQLite$(SOV) $(PORTABLEOBJDIR)$(LP)EDASQLite$(SO).0
+ifdef EDASQLiteCipher
+	ln -sf $(LP)EDASQLiteCipher$(SOV) $(PORTABLEOBJDIR)$(LP)EDASQLiteCipher$(SO).0
+endif
+ifneq ($(ECERE_AUDIO),n)
+	ln -sf $(LP)EcereAudio$(SOV) $(PORTABLEOBJDIR)$(LP)EcereAudio$(SO).0
+endif
+	ln -sf $(LP)ecere$(SOV) $(PORTABLEOBJDIR)$(LP)ecere$(SO)
+	ln -sf $(LP)ecereCOM$(SOV) $(PORTABLEOBJDIR)$(LP)ecereCOM$(SO)
+	ln -sf $(LP)ec$(SOV) $(PORTABLEOBJDIR)$(LP)ec$(SO)
+	ln -sf $(LP)EDA$(SOV) $(PORTABLEOBJDIR)$(LP)EDA$(SO)
+	ln -sf $(LP)EDASQLite$(SOV) $(PORTABLEOBJDIR)$(LP)EDASQLite$(SO)
+ifdef EDASQLiteCipher
+	ln -sf $(LP)EDASQLiteCipher$(SOV) $(PORTABLEOBJDIR)$(LP)EDASQLiteCipher$(SO)
+endif
+	ln -sf $(LP)EcereAudio$(SOV) $(PORTABLEOBJDIR)$(LP)EcereAudio$(SO)
+endif
+ifndef WINDOWS_TARGET
+ifndef LINUX_TARGET
+	$(call cp,ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SO),$(PORTABLEOBJDIR))
+	$(call cp,ecere/obj/ecereCOM.release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecereCOM$(SO),$(PORTABLEOBJDIR))
+	$(call cp,compiler/libec/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ec$(SO),$(PORTABLEOBJDIR))
+	$(call cp,eda/libeda/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDA$(SO),$(PORTABLEOBJDIR))
+	$(call cp,eda/drivers/sqlite/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLite$(SO),$(PORTABLEOBJDIR))
+ifneq ($(ECERE_AUDIO),n)
+	$(call cp,audio/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EcereAudio$(SO),$(PORTABLEOBJDIR))
+endif
+ifdef EDASQLiteCipher
+	$(call cp,eda/drivers/sqliteCipher/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)EDASQLiteCipher$(SO),$(PORTABLEOBJDIR))
+endif
+endif
+endif
+	$(call cp,ide/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecere-ide$(E),$(PORTABLEOBJDIR))
+	$(call cp,ear/cmd/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ear$(E),$(PORTABLEOBJDIR))
+	$(call cp,compiler/ecc/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecc$(E),$(PORTABLEOBJDIR))
+	$(call cp,compiler/ecp/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecp$(E),$(PORTABLEOBJDIR))
+	$(call cp,compiler/ecs/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecs$(E),$(PORTABLEOBJDIR))
+	$(call cp,epj2make/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/epj2make$(E),$(PORTABLEOBJDIR))
+	$(call cp,documentor/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/documentor$(E),$(PORTABLEOBJDIR))
+	$(call cp,ecere/obj/vanilla.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/libecereVanilla$(A),$(PORTABLEOBJDIR))
+	$(call cp,portable/res/EcereIDE/config.econ,$(PORTABLEOBJDIR)EcereIDE/)
+	$(call cp,portable/res/EcereIDE/compilerConfigs/Default.econ,$(PORTABLEOBJDIR)EcereIDE/compilerConfigs/)
+	@$(call echo,A Portable Ecere SDK has been configured in the $(PORTABLEOBJDIR) directory.)
 
 outputdirs:
 	$(call mkdir,$(OBJDIR))
