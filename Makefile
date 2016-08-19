@@ -5,6 +5,7 @@ endif
 
 _CF_DIR =
 
+include config.mk
 include crossplatform.mk
 include default.cf
 
