@@ -7,7 +7,10 @@ OBJ = obj/bin.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/
 
 _CF_DIR = ../../
 
-include $(_CF_DIR)crossplatform.mk
+ifndef _CPLMK
+_CPLMK := crossplatform.mk
+endif
+include $(_CF_DIR)$(_CPLMK)
 include $(_CF_DIR)default.cf
 
 all: bindir ecere libec ecp ecc ecs
@@ -62,5 +65,5 @@ distclean:
 	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 Makefile: ;
-$(_CF_DIR)crossplatform.mk: ;
+$(_CF_DIR)$(_CPLMK): ;
 $(_CF_DIR)default.cf: ;

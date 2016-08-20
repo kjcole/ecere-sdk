@@ -5,9 +5,12 @@ endif
 
 _CF_DIR =
 
-include config.mk
-include crossplatform.mk
-include default.cf
+include $(_CF_DIR)config.mk
+ifndef _CPLMK
+_CPLMK := crossplatform.mk
+endif
+include $(_CF_DIR)$(_CPLMK)
+include $(_CF_DIR)default.cf
 
 ifdef BSD_HOST
 INSTALL_FLAGS :=
@@ -578,8 +581,8 @@ distclean:
 DOC = doc
 
 Makefile: ;
-crossplatform.mk: ;
-default.cf: ;
+$(_CF_DIR)$(_CPLMK): ;
+$(_CF_DIR)default.cf: ;
 
 BINARIES = \
 	ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SOV) \
