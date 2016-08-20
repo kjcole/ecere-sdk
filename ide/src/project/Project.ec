@@ -539,7 +539,7 @@ int OutputFileList(File f, const char * name, Array<String> list, Map<String, in
                int itemLen = strlen(list[n]);
                if(len > 3 && len + itemLen > breakLineLength)
                {
-                  f.Printf(" \\\n\t%s", list[n]);
+                  f.Printf(" \\\n\t$(srcdir)%s", list[n]);
                   len = 3;
                }
                else
@@ -549,7 +549,7 @@ int OutputFileList(File f, const char * name, Array<String> list, Map<String, in
                }
             }
             else
-               f.Printf(" \\\n\t%s", list[n]);
+               f.Printf(" \\\n\t$(srcdir)%s", list[n]);
          }
          offset += itemCount;
          f.Puts("\n");

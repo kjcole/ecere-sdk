@@ -1715,7 +1715,7 @@ private:
                if(!result)
                {
 #endif
-                  f.Printf("$(OBJ)%s.sym: %s%s.%s\n",
+                  f.Printf("$(OBJ)%s.sym: $(srcdir)%s%s.%s\n",
                      moduleName, modulePath, moduleName, extension);
 
                   f.Puts("\t$(ECP)");
@@ -1914,7 +1914,7 @@ private:
                      moduleName, modulePath, moduleName, extension);
                   */
 #endif
-                  f.Printf("$(OBJ)%s.c: %s%s.%s $(OBJ)%s.sym | $(SYMBOLS)\n",
+                  f.Printf("$(OBJ)%s.c: $(srcdir)%s%s.%s $(OBJ)%s.sym | $(SYMBOLS)\n",
                      moduleName, modulePath, moduleName, extension, moduleName);
 #if 0
                }
@@ -2177,7 +2177,7 @@ private:
                   PathCatSlash(tempPath, child.name);
                }
                EscapeForMake(resPath, tempPath, false, true, false);
-               f.Printf(" %s%s", useRes ? "$(RES)" : "", resPath);
+               f.Printf(" %s$(srcdir)%s", useRes ? "$(RES)" : "", resPath);
                count++;
             }
             if(count == 10 || (count > 0 && (ts || !child.next)))
