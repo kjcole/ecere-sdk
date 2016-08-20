@@ -64,3 +64,5 @@ ifdef _SDK_SRC_ROOT
 endif
 
 $(MAKEFILE_LIST): ;
+$(SOURCES): ;
+$(RESOURCES): ;

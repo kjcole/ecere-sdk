@@ -581,6 +581,8 @@ distclean:
 DOC = doc
 
 $(MAKEFILE_LIST): ;
+$(SOURCES): ;
+$(RESOURCES): ;
 
 BINARIES = \
 	ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SOV) \

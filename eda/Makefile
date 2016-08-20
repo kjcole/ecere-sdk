@@ -46,3 +46,5 @@ distclean:
 	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
+$(SOURCES): ;
+$(RESOURCES): ;
