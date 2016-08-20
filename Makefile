@@ -580,9 +580,7 @@ distclean:
 
 DOC = doc
 
-Makefile: ;
-$(_CF_DIR)$(_CPLMK): ;
-$(_CF_DIR)default.cf: ;
+$(MAKEFILE_LIST): ;
 
 BINARIES = \
 	ecere/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecere$(SOV) \

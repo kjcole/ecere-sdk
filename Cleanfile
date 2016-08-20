@@ -63,5 +63,4 @@ ifdef _SDK_SRC_ROOT
  endif
 endif
 
-$(_SDK_SRC_ROOT)Cleanfile: ;
-$(_SDK_SRC_ROOT)$(_CPLMK): ;
+$(MAKEFILE_LIST): ;
