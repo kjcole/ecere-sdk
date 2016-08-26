@@ -36,8 +36,8 @@ USE_BOOTSTRAP := defined
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -48,7 +48,7 @@ RES =
 TARGET = obj/$(CONFIG).$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ear$(E)
 
 _ECSOURCES = \
-	ear.ec
+	$(srcdir)ear.ec
 
 ECSOURCES = $(call shwspace,$(_ECSOURCES))
 
@@ -67,9 +67,9 @@ OBJECTS = $(ECOBJECTS) $(OBJ)$(MODULE).main$(O)
 SOURCES = $(ECSOURCES)
 
 RESOURCES = \
-	locale/es.mo \
-	locale/ru.mo \
-	locale/zh_CN.mo \
+	$(srcdir)locale/es.mo \
+	$(srcdir)locale/ru.mo \
+	$(srcdir)locale/zh_CN.mo \
 	../extract/obj/release.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/extract$(E)
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
@@ -133,21 +133,18 @@ endif
 
 # SYMBOL RULES
 
-$(OBJ)ear.sym: ear.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c ear.ec -o $(OBJ)ear.sym
+$(SYMBOLS): $(OBJ)%.sym: $(srcdir)%.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 # C OBJECT RULES
 
-$(OBJ)ear.c: ear.ec $(OBJ)ear.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c ear.ec -o $(OBJ)ear.c -symbols $(OBJ)
+$(COBJECTS): $(OBJ)%.c: $(srcdir)%.ec $(OBJ)%.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
 # OBJECT RULES
 
-$(OBJ)ear.o: $(OBJ)ear.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)ear.c -o $(OBJ)ear.o
-
-$(OBJ)$(MODULE).main$(O): $(OBJ)$(MODULE).main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)$(MODULE).main.c -o $(OBJ)$(MODULE).main$(O)
+$(ECOBJECTS) $(OBJ)$(MODULE).main$(O): $(OBJ)%.o: $(OBJ)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)$(MODULE).main.o $(OBJ)$(MODULE).main.c $(OBJ)$(MODULE).main.ec $(OBJ)$(MODULE).main$(I) $(OBJ)$(MODULE).main$(S))
@@ -175,7 +172,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

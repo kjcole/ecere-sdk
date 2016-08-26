@@ -36,8 +36,8 @@ USE_BOOTSTRAP := defined
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -48,7 +48,7 @@ RES =
 TARGET = obj/$(CONFIG).$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecc$(E)
 
 _ECSOURCES = \
-	ecc.ec
+	$(srcdir)ecc.ec
 
 ECSOURCES = $(call shwspace,$(_ECSOURCES))
 
@@ -67,12 +67,12 @@ OBJECTS = $(ECOBJECTS) $(OBJ)$(MODULE).main$(O)
 SOURCES = $(ECSOURCES)
 
 RESOURCES = \
-	locale/es.mo \
-	locale/he.mo \
-	locale/pt_BR.mo \
-	locale/ru.mo \
-	locale/vi.mo \
-	locale/zh_CN.mo
+	$(srcdir)locale/es.mo \
+	$(srcdir)locale/he.mo \
+	$(srcdir)locale/pt_BR.mo \
+	$(srcdir)locale/ru.mo \
+	$(srcdir)locale/vi.mo \
+	$(srcdir)locale/zh_CN.mo
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
@@ -127,21 +127,18 @@ endif
 
 # SYMBOL RULES
 
-$(OBJ)ecc.sym: ecc.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c ecc.ec -o $(OBJ)ecc.sym
+$(SYMBOLS): $(OBJ)%.sym: $(srcdir)%.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 # C OBJECT RULES
 
-$(OBJ)ecc.c: ecc.ec $(OBJ)ecc.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c ecc.ec -o $(OBJ)ecc.c -symbols $(OBJ)
+$(COBJECTS): $(OBJ)%.c: $(srcdir)%.ec $(OBJ)%.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
 # OBJECT RULES
 
-$(OBJ)ecc.o: $(OBJ)ecc.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)ecc.c -o $(OBJ)ecc.o
-
-$(OBJ)$(MODULE).main$(O): $(OBJ)$(MODULE).main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)$(MODULE).main.c -o $(OBJ)$(MODULE).main$(O)
+$(ECOBJECTS) $(OBJ)$(MODULE).main$(O): $(OBJ)%.o: $(OBJ)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)$(MODULE).main.o $(OBJ)$(MODULE).main.c $(OBJ)$(MODULE).main.ec $(OBJ)$(MODULE).main$(I) $(OBJ)$(MODULE).main$(S))
@@ -169,7 +166,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

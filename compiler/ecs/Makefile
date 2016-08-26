@@ -36,8 +36,8 @@ USE_BOOTSTRAP := defined
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -125,21 +125,18 @@ endif
 
 # SYMBOL RULES
 
-$(OBJ)ecs.sym: ecs.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c ecs.ec -o $(OBJ)ecs.sym
+$(SYMBOLS): $(OBJ)%.sym: $(srcdir)%.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 # C OBJECT RULES
 
-$(OBJ)ecs.c: ecs.ec $(OBJ)ecs.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c ecs.ec -o $(OBJ)ecs.c -symbols $(OBJ)
+$(COBJECTS): $(OBJ)%.c: $(srcdir)%.ec $(OBJ)%.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
 # OBJECT RULES
 
-$(OBJ)ecs.o: $(OBJ)ecs.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)ecs.c -o $(OBJ)ecs.o
-
-$(OBJ)$(MODULE).main$(O): $(OBJ)$(MODULE).main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)$(MODULE).main.c -o $(OBJ)$(MODULE).main$(O)
+$(ECOBJECTS) $(OBJ)$(MODULE).main$(O): $(OBJ)%.o: $(OBJ)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)$(MODULE).main.o $(OBJ)$(MODULE).main.c $(OBJ)$(MODULE).main.ec $(OBJ)$(MODULE).main$(I) $(OBJ)$(MODULE).main$(S))
@@ -167,7 +164,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

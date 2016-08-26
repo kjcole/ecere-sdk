@@ -35,8 +35,8 @@ _CF_DIR = ../../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -51,8 +51,8 @@ OBJECTS = \
 	$(OBJ)$(MODULE).main$(O)
 
 SOURCES = \
-	bootstrap/ecs.c \
-	bootstrap/ecs.main.c
+	$(srcdir)bootstrap/ecs.c \
+	$(srcdir)bootstrap/ecs.main.c
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
@@ -108,11 +108,8 @@ endif
 
 # OBJECT RULES
 
-$(OBJ)ecs.o: bootstrap/ecs.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/ecs.c -o $(OBJ)ecs.o
-
-$(OBJ)ecs.main.o: bootstrap/ecs.main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/ecs.main.c -o $(OBJ)ecs.main.o
+$(OBJECTS): $(OBJ)%.o: $(srcdir)bootstrap/%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 clean:
 	$(call rm,$(TARGET))
@@ -122,7 +119,7 @@ realclean:
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

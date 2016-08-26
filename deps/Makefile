@@ -1,13 +1,15 @@
 .PHONY: freetype jpeg png gif z curl ffi cleantarget clean realclean distclean
+ifneq ($(V),1)
 .SILENT:
+endif
 
 _CF_DIR = ../
 
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 ifdef WINDOWS_TARGET
 all: freetype jpeg png gif ffi z curl
@@ -21,23 +23,28 @@ endif
 
 freetype:
 	@$(call echo,Building FreeType...)
-	+cd freetype-2.3.12 && $(_MAKE)
+	$(call mkdir,freetype-2.3.12)
+	+$(call cdmake,freetype-2.3.12,)
 	
 jpeg:
 	@$(call echo,Building libjpeg...)
-	+cd jpeg-9a && $(_MAKE)
+	$(call mkdir,jpeg-9a)
+	+$(call cdmake,jpeg-9a,)
 
 png:
 	@$(call echo,Building libpng...)
-	+cd libpng-1.6.12 && $(_MAKE)
+	$(call mkdir,libpng-1.6.12)
+	+$(call cdmake,libpng-1.6.12,)
 
 gif:
 	@$(call echo,Building libungif...)
-	+cd libungif-4.1.1 && $(_MAKE)
+	$(call mkdir,libungif-4.1.1)
+	+$(call cdmake,libungif-4.1.1,)
 
 z:
 	@$(call echo,Building zlib...)
-	+cd zlib-1.2.8 && $(_MAKE)
+	$(call mkdir,zlib-1.2.8)
+	+$(call cdmake,zlib-1.2.8,)
 
 curl:
 	@$(call echo,Building libcurl...)
@@ -45,37 +52,38 @@ curl:
 
 ffi:
 	@$(call echo,Building libffi...)
-	+cd libffi-3.0.11 && $(_MAKE)
+	$(call mkdir,libffi-3.0.11)
+	+$(call cdmake,libffi-3.0.11,)
 
 cleantarget:
-	+cd freetype-2.3.12 && $(_MAKE) cleantarget
-	+cd libpng-1.6.12 && $(_MAKE) cleantarget
-	+cd zlib-1.2.8 && $(_MAKE) cleantarget
-	+cd jpeg-9a && $(_MAKE) cleantarget
-	+cd libungif-4.1.1 && $(_MAKE) cleantarget
-	+cd curl-7.51.0 && $(_MAKE) cleantarget
-	+cd libffi-3.0.11 && $(_MAKE) cleantarget
+	+$(call cdmake,freetype-2.3.12,cleantarget)
+	+$(call cdmake,libpng-1.6.12,cleantarget)
+	+$(call cdmake,zlib-1.2.8,cleantarget)
+	+$(call cdmake,jpeg-9a,cleantarget)
+	+$(call cdmake,libungif-4.1.1,cleantarget)
+	+$(call cdmake,curl-7.51.0,cleantarget)
+	+$(call cdmake,libffi-3.0.11,cleantarget)
 
 clean:
-	+cd freetype-2.3.12 && $(_MAKE) clean
-	+cd libpng-1.6.12 && $(_MAKE) clean
-	+cd zlib-1.2.8 && $(_MAKE) clean
-	+cd jpeg-9a && $(_MAKE) clean
-	+cd libungif-4.1.1 && $(_MAKE) clean
-	+cd curl-7.51.0 && $(_MAKE) clean
-	+cd libffi-3.0.11 && $(_MAKE) clean
+	+$(call cdmake,freetype-2.3.12,clean)
+	+$(call cdmake,libpng-1.6.12,clean)
+	+$(call cdmake,zlib-1.2.8,clean)
+	+$(call cdmake,jpeg-9a,clean)
+	+$(call cdmake,libungif-4.1.1,clean)
+	+$(call cdmake,curl-7.51.0,clean)
+	+$(call cdmake,libffi-3.0.11,clean)
 
 realclean:
-	+cd freetype-2.3.12 && $(_MAKE) realclean
-	+cd libpng-1.6.12 && $(_MAKE) realclean
-	+cd zlib-1.2.8 && $(_MAKE) realclean
-	+cd jpeg-9a && $(_MAKE) realclean
-	+cd libungif-4.1.1 && $(_MAKE) realclean
-	+cd curl-7.51.0 && $(_MAKE) realclean
-	+cd libffi-3.0.11 && $(_MAKE) realclean
+	+$(call cdmake,freetype-2.3.12,realclean)
+	+$(call cdmake,libpng-1.6.12,realclean)
+	+$(call cdmake,zlib-1.2.8,realclean)
+	+$(call cdmake,jpeg-9a,realclean)
+	+$(call cdmake,libungif-4.1.1,realclean)
+	+$(call cdmake,curl-7.51.0,realclean)
+	+$(call cdmake,libffi-3.0.11,realclean)
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

@@ -37,8 +37,8 @@ USE_BOOTSTRAP := defined
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 ifdef PREFIXLIBDIR
 CFLAGS += -DDEB_HOST_MULTIARCH=\"$(call escspace,$(PREFIXLIBDIR))\"
@@ -58,22 +58,22 @@ SONAME =
 endif
 
 _ECSOURCES = \
-	src/sys/Mutex.ec \
-	src/sys/i18n.ec \
-	src/com/containers/Array.ec \
-	src/com/containers/AVLTree.ec \
-	src/com/containers/BuiltInContainer.ec \
-	src/com/containers/Container.ec \
-	src/com/containers/CustomAVLTree.ec \
-	src/com/containers/LinkList.ec \
-	src/com/containers/List.ec \
-	src/com/containers/Map.ec \
-	src/com/BinaryTree.ec \
-	src/com/BTNode.ec \
-	src/com/dataTypes.ec \
-	src/com/instance.ec \
-	src/com/String.ec \
-	src/com/OldList.ec
+	$(srcdir)src/sys/Mutex.ec \
+	$(srcdir)src/sys/i18n.ec \
+	$(srcdir)src/com/containers/Array.ec \
+	$(srcdir)src/com/containers/AVLTree.ec \
+	$(srcdir)src/com/containers/BuiltInContainer.ec \
+	$(srcdir)src/com/containers/Container.ec \
+	$(srcdir)src/com/containers/CustomAVLTree.ec \
+	$(srcdir)src/com/containers/LinkList.ec \
+	$(srcdir)src/com/containers/List.ec \
+	$(srcdir)src/com/containers/Map.ec \
+	$(srcdir)src/com/BinaryTree.ec \
+	$(srcdir)src/com/BTNode.ec \
+	$(srcdir)src/com/dataTypes.ec \
+	$(srcdir)src/com/instance.ec \
+	$(srcdir)src/com/String.ec \
+	$(srcdir)src/com/OldList.ec
 
 ECSOURCES = $(call shwspace,$(_ECSOURCES))
 
@@ -93,7 +93,7 @@ _OBJECTS = \
 OBJECTS = $(_OBJECTS) $(ECOBJECTS) $(OBJ)$(MODULE).main$(O)
 
 SOURCES = $(ECSOURCES) \
-	src/com/instance.c
+	$(srcdir)src/com/instance.c
 
 RESOURCES =
 
@@ -167,159 +167,159 @@ endif
 
 # SYMBOL RULES
 
-$(OBJ)Mutex.sym: src/sys/Mutex.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/sys/Mutex.ec -o $(OBJ)Mutex.sym
+$(OBJ)Mutex.sym: $(srcdir)src/sys/Mutex.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)i18n.sym: src/sys/i18n.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/sys/i18n.ec -o $(OBJ)i18n.sym
+$(OBJ)i18n.sym: $(srcdir)src/sys/i18n.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)Array.sym: src/com/containers/Array.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/Array.ec -o $(OBJ)Array.sym
+$(OBJ)Array.sym: $(srcdir)src/com/containers/Array.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)AVLTree.sym: src/com/containers/AVLTree.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/AVLTree.ec -o $(OBJ)AVLTree.sym
+$(OBJ)AVLTree.sym: $(srcdir)src/com/containers/AVLTree.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)BuiltInContainer.sym: src/com/containers/BuiltInContainer.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/BuiltInContainer.ec -o $(OBJ)BuiltInContainer.sym
+$(OBJ)BuiltInContainer.sym: $(srcdir)src/com/containers/BuiltInContainer.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)Container.sym: src/com/containers/Container.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/Container.ec -o $(OBJ)Container.sym
+$(OBJ)Container.sym: $(srcdir)src/com/containers/Container.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)CustomAVLTree.sym: src/com/containers/CustomAVLTree.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/CustomAVLTree.ec -o $(OBJ)CustomAVLTree.sym
+$(OBJ)CustomAVLTree.sym: $(srcdir)src/com/containers/CustomAVLTree.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)LinkList.sym: src/com/containers/LinkList.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/LinkList.ec -o $(OBJ)LinkList.sym
+$(OBJ)LinkList.sym: $(srcdir)src/com/containers/LinkList.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)List.sym: src/com/containers/List.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/List.ec -o $(OBJ)List.sym
+$(OBJ)List.sym: $(srcdir)src/com/containers/List.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)Map.sym: src/com/containers/Map.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/containers/Map.ec -o $(OBJ)Map.sym
+$(OBJ)Map.sym: $(srcdir)src/com/containers/Map.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)BinaryTree.sym: src/com/BinaryTree.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/BinaryTree.ec -o $(OBJ)BinaryTree.sym
+$(OBJ)BinaryTree.sym: $(srcdir)src/com/BinaryTree.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)BTNode.sym: src/com/BTNode.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/BTNode.ec -o $(OBJ)BTNode.sym
+$(OBJ)BTNode.sym: $(srcdir)src/com/BTNode.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)dataTypes.sym: src/com/dataTypes.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/dataTypes.ec -o $(OBJ)dataTypes.sym
+$(OBJ)dataTypes.sym: $(srcdir)src/com/dataTypes.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)instance.sym: src/com/instance.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/instance.ec -o $(OBJ)instance.sym
+$(OBJ)instance.sym: $(srcdir)src/com/instance.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)String.sym: src/com/String.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/String.ec -o $(OBJ)String.sym
+$(OBJ)String.sym: $(srcdir)src/com/String.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)OldList.sym: src/com/OldList.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c src/com/OldList.ec -o $(OBJ)OldList.sym
+$(OBJ)OldList.sym: $(srcdir)src/com/OldList.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 # C OBJECT RULES
 
-$(OBJ)Mutex.c: src/sys/Mutex.ec $(OBJ)Mutex.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/sys/Mutex.ec -o $(OBJ)Mutex.c -symbols $(OBJ)
+$(OBJ)Mutex.c: $(srcdir)src/sys/Mutex.ec $(OBJ)Mutex.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)i18n.c: src/sys/i18n.ec $(OBJ)i18n.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/sys/i18n.ec -o $(OBJ)i18n.c -symbols $(OBJ)
+$(OBJ)i18n.c: $(srcdir)src/sys/i18n.ec $(OBJ)i18n.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)Array.c: src/com/containers/Array.ec $(OBJ)Array.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/Array.ec -o $(OBJ)Array.c -symbols $(OBJ)
+$(OBJ)Array.c: $(srcdir)src/com/containers/Array.ec $(OBJ)Array.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)AVLTree.c: src/com/containers/AVLTree.ec $(OBJ)AVLTree.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/AVLTree.ec -o $(OBJ)AVLTree.c -symbols $(OBJ)
+$(OBJ)AVLTree.c: $(srcdir)src/com/containers/AVLTree.ec $(OBJ)AVLTree.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)BuiltInContainer.c: src/com/containers/BuiltInContainer.ec $(OBJ)BuiltInContainer.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/BuiltInContainer.ec -o $(OBJ)BuiltInContainer.c -symbols $(OBJ)
+$(OBJ)BuiltInContainer.c: $(srcdir)src/com/containers/BuiltInContainer.ec $(OBJ)BuiltInContainer.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)Container.c: src/com/containers/Container.ec $(OBJ)Container.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/Container.ec -o $(OBJ)Container.c -symbols $(OBJ)
+$(OBJ)Container.c: $(srcdir)src/com/containers/Container.ec $(OBJ)Container.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)CustomAVLTree.c: src/com/containers/CustomAVLTree.ec $(OBJ)CustomAVLTree.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/CustomAVLTree.ec -o $(OBJ)CustomAVLTree.c -symbols $(OBJ)
+$(OBJ)CustomAVLTree.c: $(srcdir)src/com/containers/CustomAVLTree.ec $(OBJ)CustomAVLTree.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)LinkList.c: src/com/containers/LinkList.ec $(OBJ)LinkList.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/LinkList.ec -o $(OBJ)LinkList.c -symbols $(OBJ)
+$(OBJ)LinkList.c: $(srcdir)src/com/containers/LinkList.ec $(OBJ)LinkList.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)List.c: src/com/containers/List.ec $(OBJ)List.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/List.ec -o $(OBJ)List.c -symbols $(OBJ)
+$(OBJ)List.c: $(srcdir)src/com/containers/List.ec $(OBJ)List.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)Map.c: src/com/containers/Map.ec $(OBJ)Map.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/containers/Map.ec -o $(OBJ)Map.c -symbols $(OBJ)
+$(OBJ)Map.c: $(srcdir)src/com/containers/Map.ec $(OBJ)Map.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)BinaryTree.c: src/com/BinaryTree.ec $(OBJ)BinaryTree.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/BinaryTree.ec -o $(OBJ)BinaryTree.c -symbols $(OBJ)
+$(OBJ)BinaryTree.c: $(srcdir)src/com/BinaryTree.ec $(OBJ)BinaryTree.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)BTNode.c: src/com/BTNode.ec $(OBJ)BTNode.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/BTNode.ec -o $(OBJ)BTNode.c -symbols $(OBJ)
+$(OBJ)BTNode.c: $(srcdir)src/com/BTNode.ec $(OBJ)BTNode.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)dataTypes.c: src/com/dataTypes.ec $(OBJ)dataTypes.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/dataTypes.ec -o $(OBJ)dataTypes.c -symbols $(OBJ)
+$(OBJ)dataTypes.c: $(srcdir)src/com/dataTypes.ec $(OBJ)dataTypes.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)instance.c: src/com/instance.ec $(OBJ)instance.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/instance.ec -o $(OBJ)instance.c -symbols $(OBJ)
+$(OBJ)instance.c: $(srcdir)src/com/instance.ec $(OBJ)instance.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)String.c: src/com/String.ec $(OBJ)String.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/String.ec -o $(OBJ)String.c -symbols $(OBJ)
+$(OBJ)String.c: $(srcdir)src/com/String.ec $(OBJ)String.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
-$(OBJ)OldList.c: src/com/OldList.ec $(OBJ)OldList.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/OldList.ec -o $(OBJ)OldList.c -symbols $(OBJ)
+$(OBJ)OldList.c: $(srcdir)src/com/OldList.ec $(OBJ)OldList.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
 # OBJECT RULES
 
 $(OBJ)Mutex.o: $(OBJ)Mutex.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)Mutex.c -o $(OBJ)Mutex.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)i18n.o: $(OBJ)i18n.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)i18n.c -o $(OBJ)i18n.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)Array.o: $(OBJ)Array.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)Array.c -o $(OBJ)Array.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)AVLTree.o: $(OBJ)AVLTree.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)AVLTree.c -o $(OBJ)AVLTree.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)BuiltInContainer.o: $(OBJ)BuiltInContainer.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)BuiltInContainer.c -o $(OBJ)BuiltInContainer.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)Container.o: $(OBJ)Container.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)Container.c -o $(OBJ)Container.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)CustomAVLTree.o: $(OBJ)CustomAVLTree.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)CustomAVLTree.c -o $(OBJ)CustomAVLTree.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)LinkList.o: $(OBJ)LinkList.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)LinkList.c -o $(OBJ)LinkList.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)List.o: $(OBJ)List.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)List.c -o $(OBJ)List.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)Map.o: $(OBJ)Map.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)Map.c -o $(OBJ)Map.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)BinaryTree.o: $(OBJ)BinaryTree.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)BinaryTree.c -o $(OBJ)BinaryTree.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)BTNode.o: $(OBJ)BTNode.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)BTNode.c -o $(OBJ)BTNode.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)dataTypes.o: $(OBJ)dataTypes.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)dataTypes.c -o $(OBJ)dataTypes.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)instance.o: $(OBJ)instance.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)instance.c -o $(OBJ)instance.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)String.o: $(OBJ)String.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)String.c -o $(OBJ)String.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)OldList.o: $(OBJ)OldList.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)OldList.c -o $(OBJ)OldList.o
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
-$(OBJ)instance.c.o: src/com/instance.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c src/com/instance.c -o $(OBJ)instance.c.o
+$(OBJ)instance.c.o: $(srcdir)src/com/instance.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 $(OBJ)$(MODULE).main$(O): $(OBJ)$(MODULE).main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)$(MODULE).main.c -o $(OBJ)$(MODULE).main$(O)
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)$(MODULE).main.o $(OBJ)$(MODULE).main.c $(OBJ)$(MODULE).main.ec $(OBJ)$(MODULE).main$(I) $(OBJ)$(MODULE).main$(S))
@@ -347,7 +347,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

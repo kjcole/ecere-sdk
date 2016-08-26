@@ -10,8 +10,8 @@ _CF_DIR = ../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 all: bindir ecere libec ecp ecc ecs
 	$(call cp,ecp/obj/bootstrap.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecp$(E) ecc/obj/bootstrap.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecc$(E) ecs/obj/bootstrap.$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/ecs$(E),$(OBJ))
@@ -22,23 +22,28 @@ bindir:
 
 ecere:
 	@$(call echo,Building ecere...)
-	+cd ecere && $(_MAKE)
+	$(call mkdir,ecere)
+	+$(call cdmake,ecere,)
 
 libec:
 	@$(call echo,Building ec...)
-	+cd libec && $(_MAKE)
+	$(call mkdir,libec)
+	+$(call cdmake,libec,)
 
 ecp: ecere libec
 	@$(call echo,Building ecp...)
-	+cd ecp && $(_MAKE)
+	$(call mkdir,ecp)
+	+$(call cdmake,ecp,)
 
 ecc: ecere libec
 	@$(call echo,Building ecc...)
-	+cd ecc && $(_MAKE)
+	$(call mkdir,ecc)
+	+$(call cdmake,ecc,)
 
 ecs: ecere libec
 	@$(call echo,Building ecs...)
-	+cd ecs && $(_MAKE)
+	$(call mkdir,ecs)
+	+$(call cdmake,ecs,)
 
 cleantarget:
 	$(call rm,$(OBJ)ecp$(E) $(OBJ)ecc$(E) $(OBJ)ecs$(E))
@@ -47,22 +52,22 @@ ifdef WINDOWS_TARGET
 endif
 
 clean: cleantarget
-	+cd ecere && $(_MAKE) clean
-	+cd libec && $(_MAKE) clean
-	+cd ecp && $(_MAKE) clean
-	+cd ecc && $(_MAKE) clean
-	+cd ecs && $(_MAKE) clean
+	+$(call cdmake,ecere,clean)
+	+$(call cdmake,libec,clean)
+	+$(call cdmake,ecp,clean)
+	+$(call cdmake,ecc,clean)
+	+$(call cdmake,ecs,clean)
 
 realclean: cleantarget
 	$(call rmr,$(OBJ))
-	+cd ecere && $(_MAKE) realclean
-	+cd libec && $(_MAKE) realclean
-	+cd ecp && $(_MAKE) realclean
-	+cd ecc && $(_MAKE) realclean
-	+cd ecs && $(_MAKE) realclean
+	+$(call cdmake,ecere,realclean)
+	+$(call cdmake,libec,realclean)
+	+$(call cdmake,ecp,realclean)
+	+$(call cdmake,ecc,realclean)
+	+$(call cdmake,ecs,realclean)
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

@@ -35,8 +35,8 @@ _CF_DIR = ../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -54,9 +54,9 @@ _OBJECTS = \
 OBJECTS = $(_OBJECTS)
 
 SOURCES = \
-	lib/dgif_lib.c \
-	lib/gif_err.c \
-	lib/gifalloc.c
+	$(srcdir)lib/dgif_lib.c \
+	$(srcdir)lib/gif_err.c \
+	$(srcdir)lib/gifalloc.c
 
 RESOURCES =
 
@@ -87,14 +87,8 @@ $(TARGET): $(SOURCES) $(RESOURCES) | objdir $(SYMBOLS) $(OBJECTS)
 
 # OBJECT RULES
 
-$(OBJ)dgif_lib.o: lib/dgif_lib.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c lib/dgif_lib.c -o $(OBJ)dgif_lib.o
-
-$(OBJ)gif_err.o: lib/gif_err.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c lib/gif_err.c -o $(OBJ)gif_err.o
-
-$(OBJ)gifalloc.o: lib/gifalloc.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c lib/gifalloc.c -o $(OBJ)gifalloc.o
+$(_OBJECTS): $(OBJ)%.o: $(srcdir)lib/%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(TARGET))
@@ -106,7 +100,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

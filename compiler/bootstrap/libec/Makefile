@@ -35,8 +35,8 @@ _CF_DIR = ../../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -46,7 +46,7 @@ RES =
 
 TARGET = obj/$(CONFIG).$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/$(LP)ecBootstrap$(A)
 
-OBJECTS = \
+BOOTSTRAP_OBJECTS = \
 	$(OBJ)ast.o \
 	$(OBJ)copy.o \
 	$(OBJ)dbpass.o \
@@ -66,31 +66,33 @@ OBJECTS = \
 	$(OBJ)pass2.o \
 	$(OBJ)pass3.o \
 	$(OBJ)shortcuts.o \
-	$(OBJ)type.o \
+	$(OBJ)type.o
+
+OBJECTS = $(BOOTSTRAP_OBJECTS) \
 	$(OBJ)bsl.o
 
 SOURCES = \
-	bootstrap/ast.c \
-	bootstrap/copy.c \
-	bootstrap/dbpass.c \
-	bootstrap/ec.main.c \
-	bootstrap/ecdefs.c \
-	bootstrap/expression.c \
-	bootstrap/firstPass.c \
-	bootstrap/freeAst.c \
-	bootstrap/grammar.c \
-	bootstrap/lexer.c \
-	bootstrap/loadSymbols.c \
-	bootstrap/output.c \
-	bootstrap/pass0.c \
-	bootstrap/pass1.c \
-	bootstrap/pass15.c \
-	bootstrap/pass16.c \
-	bootstrap/pass2.c \
-	bootstrap/pass3.c \
-	bootstrap/shortcuts.c \
-	bootstrap/type.c \
-	../bsl.c
+	$(srcdir)bootstrap/ast.c \
+	$(srcdir)bootstrap/copy.c \
+	$(srcdir)bootstrap/dbpass.c \
+	$(srcdir)bootstrap/ec.main.c \
+	$(srcdir)bootstrap/ecdefs.c \
+	$(srcdir)bootstrap/expression.c \
+	$(srcdir)bootstrap/firstPass.c \
+	$(srcdir)bootstrap/freeAst.c \
+	$(srcdir)bootstrap/grammar.c \
+	$(srcdir)bootstrap/lexer.c \
+	$(srcdir)bootstrap/loadSymbols.c \
+	$(srcdir)bootstrap/output.c \
+	$(srcdir)bootstrap/pass0.c \
+	$(srcdir)bootstrap/pass1.c \
+	$(srcdir)bootstrap/pass15.c \
+	$(srcdir)bootstrap/pass16.c \
+	$(srcdir)bootstrap/pass2.c \
+	$(srcdir)bootstrap/pass3.c \
+	$(srcdir)bootstrap/shortcuts.c \
+	$(srcdir)bootstrap/type.c \
+	$(srcdir)../bsl.c
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
@@ -121,68 +123,11 @@ $(TARGET): $(SOURCES) $(RESOURCES) | objdir $(SYMBOLS) $(OBJECTS)
 
 # OBJECT RULES
 
-$(OBJ)ast.o: bootstrap/ast.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/ast.c -o $(OBJ)ast.o
+$(BOOTSTRAP_OBJECTS): $(OBJ)%.o: $(srcdir)bootstrap/%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
-$(OBJ)copy.o: bootstrap/copy.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/copy.c -o $(OBJ)copy.o
-
-$(OBJ)dbpass.o: bootstrap/dbpass.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/dbpass.c -o $(OBJ)dbpass.o
-
-$(OBJ)ec.main.o: bootstrap/ec.main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/ec.main.c -o $(OBJ)ec.main.o
-
-$(OBJ)ecdefs.o: bootstrap/ecdefs.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/ecdefs.c -o $(OBJ)ecdefs.o
-
-$(OBJ)expression.o: bootstrap/expression.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/expression.c -o $(OBJ)expression.o
-
-$(OBJ)firstPass.o: bootstrap/firstPass.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/firstPass.c -o $(OBJ)firstPass.o
-
-$(OBJ)freeAst.o: bootstrap/freeAst.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/freeAst.c -o $(OBJ)freeAst.o
-
-$(OBJ)grammar.o: bootstrap/grammar.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/grammar.c -o $(OBJ)grammar.o
-
-$(OBJ)lexer.o: bootstrap/lexer.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/lexer.c -o $(OBJ)lexer.o
-
-$(OBJ)loadSymbols.o: bootstrap/loadSymbols.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/loadSymbols.c -o $(OBJ)loadSymbols.o
-
-$(OBJ)output.o: bootstrap/output.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/output.c -o $(OBJ)output.o
-
-$(OBJ)pass0.o: bootstrap/pass0.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass0.c -o $(OBJ)pass0.o
-
-$(OBJ)pass1.o: bootstrap/pass1.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass1.c -o $(OBJ)pass1.o
-
-$(OBJ)pass15.o: bootstrap/pass15.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass15.c -o $(OBJ)pass15.o
-
-$(OBJ)pass16.o: bootstrap/pass16.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass16.c -o $(OBJ)pass16.o
-
-$(OBJ)pass2.o: bootstrap/pass2.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass2.c -o $(OBJ)pass2.o
-
-$(OBJ)pass3.o: bootstrap/pass3.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/pass3.c -o $(OBJ)pass3.o
-
-$(OBJ)shortcuts.o: bootstrap/shortcuts.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/shortcuts.c -o $(OBJ)shortcuts.o
-
-$(OBJ)type.o: bootstrap/type.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c bootstrap/type.c -o $(OBJ)type.o
-
-$(OBJ)bsl.o: ../bsl.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c ../bsl.c -o $(OBJ)bsl.o
+$(OBJ)bsl.o: $(srcdir)../bsl.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 clean:
 	$(call rm,$(TARGET))
@@ -192,7 +137,7 @@ realclean:
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

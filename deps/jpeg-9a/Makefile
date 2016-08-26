@@ -36,8 +36,8 @@ _CF_DIR = ../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -101,53 +101,53 @@ _OBJECTS2 = \
 OBJECTS = $(_OBJECTS)
 
 SOURCES = \
-	jcapimin.c \
-	jcapistd.c \
-	jccoefct.c \
-	jccolor.c \
-	jcdctmgr.c \
-	jchuff.c \
-	jcinit.c \
-	jcmainct.c \
-	jcmarker.c \
-	jcmaster.c \
-	jcomapi.c \
-	jcparam.c \
-	jcprepct.c \
-	jcsample.c \
-	jctrans.c \
-	jdapimin.c \
-	jdapistd.c \
-	jdatadst.c \
-	jdatasrc.c \
-	jdcoefct.c \
-	jdcolor.c \
-	jddctmgr.c \
-	jdhuff.c \
-	jdinput.c \
-	jdmainct.c \
-	jdmarker.c \
-	jdmaster.c \
-	jdmerge.c \
-	jdpostct.c \
-	jdsample.c \
-	jdtrans.c \
-	jerror.c \
-	jfdctflt.c \
-	jfdctfst.c \
-	jfdctint.c \
-	jidctflt.c \
-	jidctfst.c \
-	jidctint.c \
-	jquant1.c \
-	jquant2.c \
-	jutils.c \
-	jaricom.c \
-	jcarith.c \
-	jdarith.c \
-	jmemmgr.c \
-	jmemnobs.c \
-	transupp.c
+	$(srcdir)jcapimin.c \
+	$(srcdir)jcapistd.c \
+	$(srcdir)jccoefct.c \
+	$(srcdir)jccolor.c \
+	$(srcdir)jcdctmgr.c \
+	$(srcdir)jchuff.c \
+	$(srcdir)jcinit.c \
+	$(srcdir)jcmainct.c \
+	$(srcdir)jcmarker.c \
+	$(srcdir)jcmaster.c \
+	$(srcdir)jcomapi.c \
+	$(srcdir)jcparam.c \
+	$(srcdir)jcprepct.c \
+	$(srcdir)jcsample.c \
+	$(srcdir)jctrans.c \
+	$(srcdir)jdapimin.c \
+	$(srcdir)jdapistd.c \
+	$(srcdir)jdatadst.c \
+	$(srcdir)jdatasrc.c \
+	$(srcdir)jdcoefct.c \
+	$(srcdir)jdcolor.c \
+	$(srcdir)jddctmgr.c \
+	$(srcdir)jdhuff.c \
+	$(srcdir)jdinput.c \
+	$(srcdir)jdmainct.c \
+	$(srcdir)jdmarker.c \
+	$(srcdir)jdmaster.c \
+	$(srcdir)jdmerge.c \
+	$(srcdir)jdpostct.c \
+	$(srcdir)jdsample.c \
+	$(srcdir)jdtrans.c \
+	$(srcdir)jerror.c \
+	$(srcdir)jfdctflt.c \
+	$(srcdir)jfdctfst.c \
+	$(srcdir)jfdctint.c \
+	$(srcdir)jidctflt.c \
+	$(srcdir)jidctfst.c \
+	$(srcdir)jidctint.c \
+	$(srcdir)jquant1.c \
+	$(srcdir)jquant2.c \
+	$(srcdir)jutils.c \
+	$(srcdir)jaricom.c \
+	$(srcdir)jcarith.c \
+	$(srcdir)jdarith.c \
+	$(srcdir)jmemmgr.c \
+	$(srcdir)jmemnobs.c \
+	$(srcdir)transupp.c
 
 RESOURCES =
 
@@ -200,146 +200,10 @@ endif
 
 # OBJECT RULES
 
-$(OBJ)jcapimin.o: jcapimin.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcapimin.c) -o $(call quote_path,$@)
+vpath %.c $(srcdir)
 
-$(OBJ)jcapistd.o: jcapistd.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcapistd.c) -o $(call quote_path,$@)
-
-$(OBJ)jccoefct.o: jccoefct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jccoefct.c) -o $(call quote_path,$@)
-
-$(OBJ)jccolor.o: jccolor.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jccolor.c) -o $(call quote_path,$@)
-
-$(OBJ)jcdctmgr.o: jcdctmgr.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcdctmgr.c) -o $(call quote_path,$@)
-
-$(OBJ)jchuff.o: jchuff.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jchuff.c) -o $(call quote_path,$@)
-
-$(OBJ)jcinit.o: jcinit.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcinit.c) -o $(call quote_path,$@)
-
-$(OBJ)jcmainct.o: jcmainct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcmainct.c) -o $(call quote_path,$@)
-
-$(OBJ)jcmarker.o: jcmarker.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcmarker.c) -o $(call quote_path,$@)
-
-$(OBJ)jcmaster.o: jcmaster.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcmaster.c) -o $(call quote_path,$@)
-
-$(OBJ)jcomapi.o: jcomapi.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcomapi.c) -o $(call quote_path,$@)
-
-$(OBJ)jcparam.o: jcparam.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcparam.c) -o $(call quote_path,$@)
-
-$(OBJ)jcprepct.o: jcprepct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcprepct.c) -o $(call quote_path,$@)
-
-$(OBJ)jcsample.o: jcsample.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcsample.c) -o $(call quote_path,$@)
-
-$(OBJ)jctrans.o: jctrans.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jctrans.c) -o $(call quote_path,$@)
-
-$(OBJ)jdapimin.o: jdapimin.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdapimin.c) -o $(call quote_path,$@)
-
-$(OBJ)jdapistd.o: jdapistd.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdapistd.c) -o $(call quote_path,$@)
-
-$(OBJ)jdatadst.o: jdatadst.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdatadst.c) -o $(call quote_path,$@)
-
-$(OBJ)jdatasrc.o: jdatasrc.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdatasrc.c) -o $(call quote_path,$@)
-
-$(OBJ)jdcoefct.o: jdcoefct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdcoefct.c) -o $(call quote_path,$@)
-
-$(OBJ)jdcolor.o: jdcolor.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdcolor.c) -o $(call quote_path,$@)
-
-$(OBJ)jddctmgr.o: jddctmgr.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jddctmgr.c) -o $(call quote_path,$@)
-
-$(OBJ)jdhuff.o: jdhuff.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdhuff.c) -o $(call quote_path,$@)
-
-$(OBJ)jdinput.o: jdinput.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdinput.c) -o $(call quote_path,$@)
-
-$(OBJ)jdmainct.o: jdmainct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdmainct.c) -o $(call quote_path,$@)
-
-$(OBJ)jdmarker.o: jdmarker.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdmarker.c) -o $(call quote_path,$@)
-
-$(OBJ)jdmaster.o: jdmaster.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdmaster.c) -o $(call quote_path,$@)
-
-$(OBJ)jdmerge.o: jdmerge.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdmerge.c) -o $(call quote_path,$@)
-
-$(OBJ)jdpostct.o: jdpostct.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdpostct.c) -o $(call quote_path,$@)
-
-$(OBJ)jdsample.o: jdsample.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdsample.c) -o $(call quote_path,$@)
-
-$(OBJ)jdtrans.o: jdtrans.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdtrans.c) -o $(call quote_path,$@)
-
-$(OBJ)jerror.o: jerror.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jerror.c) -o $(call quote_path,$@)
-
-$(OBJ)jfdctflt.o: jfdctflt.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jfdctflt.c) -o $(call quote_path,$@)
-
-$(OBJ)jfdctfst.o: jfdctfst.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jfdctfst.c) -o $(call quote_path,$@)
-
-$(OBJ)jfdctint.o: jfdctint.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jfdctint.c) -o $(call quote_path,$@)
-
-$(OBJ)jidctflt.o: jidctflt.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jidctflt.c) -o $(call quote_path,$@)
-
-$(OBJ)jidctfst.o: jidctfst.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jidctfst.c) -o $(call quote_path,$@)
-
-$(OBJ)jidctint.o: jidctint.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jidctint.c) -o $(call quote_path,$@)
-
-$(OBJ)jquant1.o: jquant1.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jquant1.c) -o $(call quote_path,$@)
-
-$(OBJ)jquant2.o: jquant2.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jquant2.c) -o $(call quote_path,$@)
-
-$(OBJ)jutils.o: jutils.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jutils.c) -o $(call quote_path,$@)
-
-$(OBJ)jaricom.o: jaricom.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jaricom.c) -o $(call quote_path,$@)
-
-$(OBJ)jcarith.o: jcarith.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jcarith.c) -o $(call quote_path,$@)
-
-$(OBJ)jdarith.o: jdarith.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jdarith.c) -o $(call quote_path,$@)
-
-$(OBJ)jmemmgr.o: jmemmgr.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jmemmgr.c) -o $(call quote_path,$@)
-
-$(OBJ)jmemnobs.o: jmemnobs.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,jmemnobs.c) -o $(call quote_path,$@)
-
-$(OBJ)transupp.o: transupp.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,transupp.c) -o $(call quote_path,$@)
+$(_OBJECTS): $(OBJ)%$(O): $(srcdir)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)objects.lst)
@@ -361,7 +225,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

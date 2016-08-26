@@ -9,8 +9,8 @@ include $(_CF_DIR)config.mk
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 ifdef BSD_HOST
 INSTALL_FLAGS :=

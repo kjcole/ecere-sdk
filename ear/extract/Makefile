@@ -36,8 +36,8 @@ USE_BOOTSTRAP := defined
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -48,7 +48,7 @@ RES =
 TARGET = obj/$(CONFIG).$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/extract$(E)
 
 _ECSOURCES = \
-	extract.ec
+	$(srcdir)extract.ec
 
 ECSOURCES = $(call shwspace,$(_ECSOURCES))
 
@@ -68,44 +68,44 @@ SOURCES = $(ECSOURCES)
 
 RESOURCES = $(RESOURCES1) $(RESOURCES2)
 RESOURCES1 = \
-	../../ecere/res/vanilla/ecere/actions/folderNew.png \
-	../../ecere/res/vanilla/ecere/actions/goUp.png \
-	../../ecere/res/vanilla/ecere/devices/computer.png \
-	../../ecere/res/vanilla/ecere/devices/driveHardDisk.png \
-	../../ecere/res/vanilla/ecere/devices/driveRemovableMedia.png \
-	../../ecere/res/vanilla/ecere/devices/mediaFloppy.png \
-	../../ecere/res/vanilla/ecere/devices/mediaOptical.png \
-	../../ecere/res/vanilla/ecere/elements/areaClose.png \
-	../../ecere/res/vanilla/ecere/elements/areaMaximize.png \
-	../../ecere/res/vanilla/ecere/elements/areaMinimize.png \
-	../../ecere/res/vanilla/ecere/elements/areaRestore.png \
-	../../ecere/res/vanilla/ecere/elements/arrowDown.png \
-	../../ecere/res/vanilla/ecere/elements/arrowLeft.png \
-	../../ecere/res/vanilla/ecere/elements/arrowRight.png \
-	../../ecere/res/vanilla/ecere/elements/arrowUp.png \
-	../../ecere/res/vanilla/ecere/elements/optionBoxDisabledSelected.png \
-	../../ecere/res/vanilla/ecere/elements/optionBoxDown.png \
-	../../ecere/res/vanilla/ecere/elements/optionBoxSelected.png \
-	../../ecere/res/vanilla/ecere/elements/optionBoxSelectedDown.png \
-	../../ecere/res/vanilla/ecere/elements/optionBoxUp.png \
-	../../ecere/res/vanilla/ecere/places/driveRemote.png \
-	../../ecere/res/vanilla/ecere/places/folder.png \
-	../../ecere/res/vanilla/ecere/places/folderRemote.png \
-	../../ecere/res/vanilla/ecere/places/networkServer.png \
-	../../ecere/res/vanilla/ecere/places/networkWorkgroup.png \
-	../../ecere/res/vanilla/ecere/status/folderOpen.png \
-	../../ecere/locale/es.mo
+	$(srcdir)../../ecere/res/vanilla/ecere/actions/folderNew.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/actions/goUp.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/devices/computer.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/devices/driveHardDisk.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/devices/driveRemovableMedia.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/devices/mediaFloppy.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/devices/mediaOptical.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/areaClose.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/areaMaximize.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/areaMinimize.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/areaRestore.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/arrowDown.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/arrowLeft.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/arrowRight.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/arrowUp.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/optionBoxDisabledSelected.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/optionBoxDown.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/optionBoxSelected.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/optionBoxSelectedDown.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/elements/optionBoxUp.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/places/driveRemote.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/places/folder.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/places/folderRemote.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/places/networkServer.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/places/networkWorkgroup.png \
+	$(srcdir)../../ecere/res/vanilla/ecere/status/folderOpen.png \
+	$(srcdir)../../ecere/locale/es.mo
 RESOURCES2 = \
-	../../ecere/locale/hu.mo \
-	../../ecere/locale/mr.mo \
-	../../ecere/locale/nl.mo \
-	../../ecere/locale/pt_BR.mo \
-	../../ecere/locale/ru.mo \
-	../../ecere/locale/zh_CN.mo \
-	locale/es.mo \
-	locale/he.mo \
-	locale/ru.mo \
-	locale/zh_CN.mo
+	$(srcdir)../../ecere/locale/hu.mo \
+	$(srcdir)../../ecere/locale/mr.mo \
+	$(srcdir)../../ecere/locale/nl.mo \
+	$(srcdir)../../ecere/locale/pt_BR.mo \
+	$(srcdir)../../ecere/locale/ru.mo \
+	$(srcdir)../../ecere/locale/zh_CN.mo \
+	$(srcdir)locale/es.mo \
+	$(srcdir)locale/he.mo \
+	$(srcdir)locale/ru.mo \
+	$(srcdir)locale/zh_CN.mo
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
@@ -229,21 +229,18 @@ endif
 
 # SYMBOL RULES
 
-$(OBJ)extract.sym: extract.ec
-	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c extract.ec -o $(OBJ)extract.sym
+$(SYMBOLS): $(OBJ)%.sym: $(srcdir)%.ec
+	$(ECP) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 # C OBJECT RULES
 
-$(OBJ)extract.c: extract.ec $(OBJ)extract.sym | $(SYMBOLS)
-	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c extract.ec -o $(OBJ)extract.c -symbols $(OBJ)
+$(COBJECTS): $(OBJ)%.c: $(srcdir)%.ec $(OBJ)%.sym | $(SYMBOLS)
+	$(ECC) $(CFLAGS) $(CECFLAGS) $(ECFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@ -symbols $(OBJ)
 
 # OBJECT RULES
 
-$(OBJ)extract.o: $(OBJ)extract.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)extract.c -o $(OBJ)extract.o
-
-$(OBJ)$(MODULE).main$(O): $(OBJ)$(MODULE).main.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $(OBJ)$(MODULE).main.c -o $(OBJ)$(MODULE).main$(O)
+$(ECOBJECTS) $(OBJ)$(MODULE).main$(O): $(OBJ)%.o: $(OBJ)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) $(FVISIBILITY) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)$(MODULE).main.o $(OBJ)$(MODULE).main.c $(OBJ)$(MODULE).main.ec $(OBJ)$(MODULE).main$(I) $(OBJ)$(MODULE).main$(S))
@@ -271,7 +268,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

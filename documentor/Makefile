@@ -35,8 +35,8 @@ _CF_DIR = ../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -47,15 +47,15 @@ RES =
 TARGET = obj/$(CONFIG).$(PLATFORM)$(COMPILER_SUFFIX)$(DEBUG_SUFFIX)/documentor$(E)
 
 _ECSOURCES = \
-	../extras/html/htmlParser.ec \
-	../extras/html/HTMLView.ec \
-	../extras/html/lines.ec \
-	../extras/html/tables.ec \
-	../ide/src/IDESettings.ec \
-	../ide/src/OldIDESettings.ec \
-	../extras/gui/controls/StringsBox.ec \
-	src/Documentor.ec \
-	src/SettingsDialog.ec
+	$(srcdir)../extras/html/htmlParser.ec \
+	$(srcdir)../extras/html/HTMLView.ec \
+	$(srcdir)../extras/html/lines.ec \
+	$(srcdir)../extras/html/tables.ec \
+	$(srcdir)../ide/src/IDESettings.ec \
+	$(srcdir)../ide/src/OldIDESettings.ec \
+	$(srcdir)../extras/gui/controls/StringsBox.ec \
+	$(srcdir)src/Documentor.ec \
+	$(srcdir)src/SettingsDialog.ec
 
 ECSOURCES = $(call shwspace,$(_ECSOURCES))
 
@@ -74,11 +74,11 @@ OBJECTS = $(ECOBJECTS) $(OBJ)$(MODULE).main$(O)
 SOURCES = $(ECSOURCES)
 
 RESOURCES = \
-	locale/es.mo \
-	locale/pt_BR.mo \
-	locale/zh_CN.mo \
-	../ide/res/actions/docOpen.png \
-	res/documentorIcon.png
+	$(srcdir)locale/es.mo \
+	$(srcdir)locale/pt_BR.mo \
+	$(srcdir)locale/zh_CN.mo \
+	$(srcdir)../ide/res/actions/docOpen.png \
+	$(srcdir)res/documentorIcon.png
 
 LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
@@ -258,7 +258,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

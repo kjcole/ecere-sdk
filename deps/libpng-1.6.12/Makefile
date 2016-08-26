@@ -36,8 +36,8 @@ _CF_DIR = ../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -66,22 +66,26 @@ _OBJECTS = \
 
 OBJECTS = $(_OBJECTS)
 
+ifndef srcdir
+srcdir = ./
+endif
+
 SOURCES = \
-	./png.c \
-	./pngerror.c \
-	./pngget.c \
-	./pngmem.c \
-	./pngpread.c \
-	./pngread.c \
-	./pngrio.c \
-	./pngrtran.c \
-	./pngrutil.c \
-	./pngset.c \
-	./pngtrans.c \
-	./pngwio.c \
-	./pngwrite.c \
-	./pngwtran.c \
-	./pngwutil.c
+	$(srcdir)png.c \
+	$(srcdir)pngerror.c \
+	$(srcdir)pngget.c \
+	$(srcdir)pngmem.c \
+	$(srcdir)pngpread.c \
+	$(srcdir)pngread.c \
+	$(srcdir)pngrio.c \
+	$(srcdir)pngrtran.c \
+	$(srcdir)pngrutil.c \
+	$(srcdir)pngset.c \
+	$(srcdir)pngtrans.c \
+	$(srcdir)pngwio.c \
+	$(srcdir)pngwrite.c \
+	$(srcdir)pngwtran.c \
+	$(srcdir)pngwutil.c
 
 RESOURCES =
 
@@ -89,8 +93,8 @@ LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
 PRJ_CFLAGS += \
 	 $(if $(DEBUG), -g, -O2 -ffast-math) $(FPIC) -w -DREPOSITORY_VERSION="\"$(REPOSITORY_VER)\"" \
-			 -I. \
-			 -I../zlib-1.2.8
+			 -I$(srcdir) \
+			 -I$(srcdir)../zlib-1.2.8
 
 ECFLAGS += -module $(MODULE)
 CECFLAGS += -cpp $(_CPP)
@@ -135,50 +139,8 @@ endif
 
 # OBJECT RULES
 
-$(OBJ)png.o: ./png.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./png.c) -o $(call quote_path,$@)
-
-$(OBJ)pngerror.o: ./pngerror.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngerror.c) -o $(call quote_path,$@)
-
-$(OBJ)pngget.o: ./pngget.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngget.c) -o $(call quote_path,$@)
-
-$(OBJ)pngmem.o: ./pngmem.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngmem.c) -o $(call quote_path,$@)
-
-$(OBJ)pngpread.o: ./pngpread.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngpread.c) -o $(call quote_path,$@)
-
-$(OBJ)pngread.o: ./pngread.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngread.c) -o $(call quote_path,$@)
-
-$(OBJ)pngrio.o: ./pngrio.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngrio.c) -o $(call quote_path,$@)
-
-$(OBJ)pngrtran.o: ./pngrtran.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngrtran.c) -o $(call quote_path,$@)
-
-$(OBJ)pngrutil.o: ./pngrutil.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngrutil.c) -o $(call quote_path,$@)
-
-$(OBJ)pngset.o: ./pngset.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngset.c) -o $(call quote_path,$@)
-
-$(OBJ)pngtrans.o: ./pngtrans.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngtrans.c) -o $(call quote_path,$@)
-
-$(OBJ)pngwio.o: ./pngwio.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngwio.c) -o $(call quote_path,$@)
-
-$(OBJ)pngwrite.o: ./pngwrite.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngwrite.c) -o $(call quote_path,$@)
-
-$(OBJ)pngwtran.o: ./pngwtran.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngwtran.c) -o $(call quote_path,$@)
-
-$(OBJ)pngwutil.o: ./pngwutil.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $(call quote_path,./pngwutil.c) -o $(call quote_path,$@)
+$(_OBJECTS): $(OBJ)%.o: $(srcdir)%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(OBJ)objects.lst)
@@ -199,7 +161,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;

@@ -35,8 +35,8 @@ _CF_DIR = ../../
 ifndef _CPLMK
 _CPLMK := crossplatform.mk
 endif
-include $(_CF_DIR)$(_CPLMK)
-include $(_CF_DIR)default.cf
+include $(srcdir)$(_CF_DIR)$(_CPLMK)
+include $(srcdir)$(_CF_DIR)default.cf
 
 # POST-INCLUDES VARIABLES
 
@@ -63,12 +63,16 @@ _OBJECTS = \
 OBJECTS = $(_OBJECTS)
 
 SOURCES = \
-	src/x86/ffi.c \
-	src/x86/$(PLATFORM_OBJ).S \
-	src/prep_cif.c \
-	src/raw_api.c \
-	src/types.c \
-	src/closures.c
+	$(srcdir)src/x86/ffi.c \
+	$(srcdir)src/x86/$(PLATFORM_OBJ).S \
+	$(srcdir)src/prep_cif.c \
+	$(srcdir)src/raw_api.c \
+	$(srcdir)src/types.c \
+	$(srcdir)src/closures.c
+
+_OBJECTS_C_DIR_src_x86 = $(call list_src_to_obj,.c,$(O),$(call list_match_sufx_dir,.c,$(srcdir)src/x86/,$(SOURCES)))
+_OBJECTS_S_DIR_src_x86 = $(call list_src_to_obj,.S,$(O),$(call list_match_sufx_dir,.S,$(srcdir)src/x86/,$(SOURCES)))
+_OBJECTS_C_DIR_src = $(call list_src_to_obj,.c,$(O),$(call list_match_sufx_dir,.c,$(srcdir)src/,$(SOURCES)))
 
 RESOURCES =
 
@@ -76,9 +80,9 @@ LIBS += $(SHAREDLIB) $(EXECUTABLE) $(LINKOPT)
 
 PRJ_CFLAGS += \
 	 $(if $(DEBUG), -g, -O2 -ffast-math) $(FPIC) -Wall \
-			 -Iinclude \
-			 -Ii686-pc-mingw32/include \
-			 -Ii686-pc-mingw32
+			 -I$(srcdir)include \
+			 -I$(srcdir)i686-pc-mingw32/include \
+			 -I$(srcdir)i686-pc-mingw32
 
 
 
@@ -111,23 +115,14 @@ endif
 
 # OBJECT RULES
 
-$(OBJ)ffi.o: src/x86/ffi.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/x86/ffi.c -o $(OBJ)ffi.o
+$(_OBJECTS_C_DIR_src_x86): $(OBJ)%.o: $(srcdir)src/x86/%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)$(PLATFORM_OBJ).o: src/x86/$(PLATFORM_OBJ).S
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/x86/$(PLATFORM_OBJ).S -o $(OBJ)$(PLATFORM_OBJ).o
+$(_OBJECTS_S_DIR_src_x86): $(OBJ)%.o: $(srcdir)src/x86/%.S
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
-$(OBJ)prep_cif.o: src/prep_cif.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/prep_cif.c -o $(OBJ)prep_cif.o
-
-$(OBJ)raw_api.o: src/raw_api.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/raw_api.c -o $(OBJ)raw_api.o
-
-$(OBJ)types.o: src/types.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/types.c -o $(OBJ)types.o
-
-$(OBJ)closures.o: src/closures.c
-	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c src/closures.c -o $(OBJ)closures.o
+$(_OBJECTS_C_DIR_src): $(OBJ)%.o: $(srcdir)src/%.c
+	$(CC) $(CFLAGS) $(PRJ_CFLAGS) -c $< -o $@
 
 cleantarget:
 	$(call rm,$(TARGET))
@@ -139,7 +134,7 @@ realclean: cleantarget
 	$(call rmr,$(OBJ))
 
 distclean:
-	$(_MAKE) -f $(_CF_DIR)Cleanfile distclean distclean_all_subdirs
+	$(_MAKE) -f $(srcdir)$(_CF_DIR)Cleanfile distclean distclean_all_subdirs
 
 $(MAKEFILE_LIST): ;
 $(SOURCES): ;
