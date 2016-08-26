@@ -185,6 +185,16 @@ hs_process = $(subst $(space),$(hidden_space),$(subst $(backslash)$(space),$(hid
 hs_quote_all = $(foreach item,$(1),"$(call hs_unhide,$(item))")
 hs_quote_each = $(foreach item,$(1),$(if $(findstring $(esc),$(item)),"$(call hs_unhide,$(item))",$(item)))
 
+
+
+list_match_dir = $(foreach path,$(2),$(if $(filter-out $(1),$(dir $(path))),,$(path)))
+list_match_sufx_dir = $(foreach path,$(3),$(if $(filter-out $(2),$(dir $(path))),,$(if $(filter-out $(1),$(suffix $(path))),,$(path))))
+list_src_to_obj = $(addprefix $(OBJ),$(patsubst %$(1),%$(2),$(notdir $(3))))
+
+list_match_src_dir_objs = $(patsubst %.c,%$(O),$(foreach path,$(2),$(if $(filter-out $(srcdir)$(1),$(dir $(path))),,$(OBJ)$(notdir $(path)))))
+
+
+
 # FILE PATH TOOLS
 fp_unquote = $(subst $(quote),,$(1))
 fp_opt_quotes = $(if $(findstring $(space),$(1)),"$(1)",$(1))
@@ -276,6 +286,10 @@ _CPP = $(if $(findstring $(space),$(CPP)),"$(CPP)",$(CPP))
 _SYSROOT = $(if $(SYSROOT),$(space)--sysroot=$(SYSROOT),)
 
 _MAKE = $(call fp_opt_quotes,$(MAKE))
+
+# cdmake = $(if $(if $(filter-out clean,$(filter-out cleantarget,$(filter-out realclean,$(2)))),$(if $(wildcard $(1)),do,),do),cd $(1) && $(_MAKE)$(if $(srcdir), srcdir=..\$(srcdir)$(1)\ -f ..\$(srcdir)$(1)\Makefile,)$(if $(2), $(2),),)
+cdmake = $(if $(if $(find clean,$(2)),$(if $(wildcard $(1)),do,),do),cd $(1) && $(_MAKE)$(if $(srcdir), srcdir=../$(srcdir)$(1)/ -f ..\\$(srcdir)$(1)\\Makefile,)$(if $(2), $(2),),)
+# cdmake = cd $(1) && $(_MAKE)$(if $(srcdir), srcdir=..\$(srcdir)$(1)\ -f ..\$(srcdir)$(1)\Makefile,)$(if $(2), $(2),)
 
 # SHELL COMMANDS
 ifdef WINDOWS_HOST
@@ -410,3 +424,5 @@ ifdef WINDOWS_TARGET
   OPENSSL_BIN_DIR = .
  endif
 endif
+
+cplm-print-%: ; @$(call echo,$* = $($*))
