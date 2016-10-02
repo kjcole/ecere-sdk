@@ -1,0 +1,127 @@
+{
+   "Version" : 0.2,
+   "ModuleName" : "C",
+   "Options" : {
+      "Warnings" : "All",
+      "IncludeDirs" : [
+         "bindings"
+      ],
+      "TargetType" : "Executable",
+      "TargetFileName" : "C",
+      "Libraries" : [
+         "ecere"
+      ]
+   },
+   "Configurations" : [
+      {
+         "Name" : "helloWorld",
+         "Options" : {
+            "Debug" : true,
+            "Optimization" : "None",
+            "PreprocessorDefinitions" : [
+               "_DEBUG"
+            ],
+            "TargetFileName" : "C_helloWorld",
+            "Console" : true,
+            "FastMath" : false
+         }
+      },
+      {
+         "Name" : "helloGUI",
+         "Options" : {
+            "Debug" : true,
+            "Optimization" : "None",
+            "PreprocessorDefinitions" : [
+               "_DEBUG"
+            ],
+            "TargetFileName" : "C_helloGUI",
+            "Console" : true,
+            "FastMath" : false
+         }
+      },
+      {
+         "Name" : "helloEDA",
+         "Options" : {
+            "Debug" : true,
+            "Optimization" : "None",
+            "PreprocessorDefinitions" : [
+               "_DEBUG"
+            ],
+            "TargetFileName" : "C_helloEDA",
+            "Console" : true,
+            "FastMath" : false
+         }
+      },
+      {
+         "Name" : "helloGnosIS",
+         "Options" : {
+            "Debug" : true,
+            "Optimization" : "None",
+            "PreprocessorDefinitions" : [
+               "_DEBUG"
+            ],
+            "TargetFileName" : "C_helloGnosIS",
+            "Console" : true,
+            "FastMath" : false
+         }
+      }
+   ],
+   "Files" : [
+      {
+         "Folder" : "src",
+         "Files" : [
+            {
+               "FileName" : "helloWorld.ec",
+               "Configurations" : [
+                  {
+                     "Name" : "helloWorld",
+                     "Options" : {
+                        "ExcludeFromBuild" : false
+                     }
+                  }
+               ]
+            },
+            {
+               "FileName" : "helloGUI.ec",
+               "Configurations" : [
+                  {
+                     "Name" : "helloGUI",
+                     "Options" : {
+                        "ExcludeFromBuild" : false
+                     }
+                  }
+               ]
+            },
+            {
+               "FileName" : "helloEDA.ec",
+               "Configurations" : [
+                  {
+                     "Name" : "helloEDA",
+                     "Options" : {
+                        "ExcludeFromBuild" : false
+                     }
+                  }
+               ]
+            },
+            {
+               "FileName" : "helloGnosIS.ec",
+               "Configurations" : [
+                  {
+                     "Name" : "helloGnosIS",
+                     "Options" : {
+                        "ExcludeFromBuild" : false
+                     }
+                  }
+               ]
+            }
+         ],
+         "Options" : {
+            "ExcludeFromBuild" : true
+         }
+      }
+   ],
+   "ResourcesPath" : "",
+   "Resources" : [
+
+   ]
+}
