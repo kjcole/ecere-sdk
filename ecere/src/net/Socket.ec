@@ -659,38 +659,35 @@ private:
          int count = 0;
 
          result = true;
-         if(!leftOver)
+         if((int)recvBufferSize - recvBytes < MAX_RECEIVE)
          {
-            if((int)recvBufferSize - recvBytes < MAX_RECEIVE)
-            {
-               recvBuffer = renew recvBuffer byte[recvBufferSize + MAX_RECEIVE];
-               recvBufferSize += MAX_RECEIVE;
-            }
+            recvBuffer = renew recvBuffer byte[recvBufferSize + MAX_RECEIVE];
+            recvBufferSize += MAX_RECEIVE;
+         }
 
-            if(FD_ISSET(s, rs) && disconnectCode == (DisconnectCode)-1)
+         if(FD_ISSET(s, rs) && disconnectCode == (DisconnectCode)-1)
+         {
+            if(type == tcp /*|| _connected*/)
+               count = ReceiveData(recvBuffer + recvBytes, recvBufferSize - recvBytes, 0);
+            else
             {
-               if(type == tcp /*|| _connected*/)
-                  count = ReceiveData(recvBuffer + recvBytes, recvBufferSize - recvBytes, 0);
-               else
+               SOCKLEN_TYPE len = sizeof(a);
+               count = (int)recvfrom(s, (char *)recvBuffer + recvBytes,
+                  recvBufferSize - recvBytes, 0, (SOCKADDR *)&a, &len);
+               strcpy(inetAddress, inet_ntoa(this.a.sin_addr));
+               inetPort = ntohs((uint16)a.sin_port);
+            }
+            switch(count)
+            {
+               case 0:
+                  disconnectCode = remoteClosed;
+                  break;
+               case -1:
                {
-                  SOCKLEN_TYPE len = sizeof(a);
-                  count = (int)recvfrom(s, (char *)recvBuffer + recvBytes,
-                     recvBufferSize - recvBytes, 0, (SOCKADDR *)&a, &len);
-                  strcpy(inetAddress, inet_ntoa(this.a.sin_addr));
-                  inetPort = ntohs((uint16)a.sin_port);
-               }
-               switch(count)
-               {
-                  case 0:
-                     disconnectCode = remoteClosed;
-                     break;
-                  case -1:
-                  {
-                     /*int yo = errno;
-                     printf("Errno is %d", errno);*/
-                     disconnectCode = remoteLost;
-                     break;
-                  }
+                  /*int yo = errno;
+                  printf("Errno is %d", errno);*/
+                  disconnectCode = remoteLost;
+                  break;
                }
             }
          }
@@ -774,27 +771,8 @@ private:
       fd_set rs, ws, es;
       int selectResult;
       Mutex mutex;
-      bool deleteMutex = false;
-      bool leftOver;
 
-      mutex = this.mutex;
-      mutex.Wait();
-      incref this;
-
-      leftOver = this.leftOver;
-      if(disconnectCode > 0 && !leftOver)
-      {
-         if(_refCount == 1)
-         {
-            deleteMutex = true;
-            this.mutex = null;
-         }
-         delete this;
-         mutex.Release();
-         if(deleteMutex)
-            delete mutex;
-         return false;
-      }
+      if(disconnectCode > 0 && !leftOver) return false;
       FD_ZERO(&rs);
       FD_ZERO(&ws);
       FD_ZERO(&es);
@@ -802,6 +780,9 @@ private:
       //FD_SET(s, &ws);
       FD_SET(s, &es);
 
+      mutex = this.mutex;
+      mutex.Wait();
+      incref this;
       mutex.Release();
       selectResult = select((int)(s+1), &rs, &ws, &es, leftOver ? &tv : (timeOut ? &tvTO : null));
 
@@ -810,15 +791,8 @@ private:
          gotEvent |= ProcessSocket(&rs, &ws, &es);
       }
       mutex.Wait();
-      if(_refCount == 1)
-      {
-         deleteMutex = true;
-         this.mutex = null;
-      }
       delete this;
       mutex.Release();
-      if(deleteMutex)
-         delete mutex;
       return gotEvent;
    }
 
