@@ -1,7 +1,7 @@
 import "ecere"
 import "connection"
 
-define ECOMMUNICATOR_PORT = 3113;
+define ECOMMUNICATOR_PORT = 7778;//3113;
 
 class eComApp;
 
