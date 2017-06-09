@@ -5,6 +5,8 @@ import "consoleApp"
 import "ecom"
 import "stringTools"
 
+import "anyKeyPause"
+
 import "DynamicString"
 import "miscTypes"
 
@@ -365,7 +367,7 @@ public class BGen : ConsoleApplication // <ArgSym>
                g.lib.outputDir = CopyString(def.lib.outputDir);*/
             //g.lib.init();
             //PrintLn("doing: ", g.dir.lang, " - ", g.lib.bindingName, " -> ", g.dir.outputDir);
-            if(g.lib.name)
+            if(g.lib.name/* && gen.lang != CPlusPlus*/)
             {
                // todo: validate g.lib.name?
                /*if(!g.lib.funcRename)
@@ -637,6 +639,8 @@ public class BGen : ConsoleApplication // <ArgSym>
       ownDirs.Free();
       ownOptions.Free();
       gens.Free();
+      PrintLn("Press any key to exit...");
+      anyKeyPause();
    }
 }
 

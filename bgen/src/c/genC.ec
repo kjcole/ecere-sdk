@@ -399,6 +399,7 @@ class CGen : Gen
                BClass c = t.c;
                Class cl = c.cl;
                BNamespace nspace = t.nspace;
+               assert(t.nspace != null);
                if(!cl.templateClass) check();
                processClass(c, v, nspace);
             }
@@ -435,6 +436,8 @@ class CGen : Gen
                v.processDependency(otypedef, otypedef, tDep);
             else if(clDep && clDep != cl)
                v.processDependency(otypedef, otypedef, clDep);
+            /*if(python && cl.type == noHeadClass && strcmp(c.cl.base.name, "class") != 0)
+               v.processDependency(otypedef, otypedef, c.cl.base);*/
          }
          aClass(c, v, &created);
       }
@@ -601,6 +604,8 @@ class CGen : Gen
 
             sc = declStruct && declStruct.specifiers ? (SpecClass)declStruct.specifiers.firstIterator.data : null;
             defs = sc ? sc.definitions : null;
+            if(python && !strcmp(cl.name, "MapElevation"))
+               Print("");
             recurseBaseClassMembers(this, cl, cl, c.isFromCurrentModule, defs, { });
             delete ident;
          }
@@ -1052,6 +1057,8 @@ ASTRawString astProperty(Property pt, BClass c, GenPropertyMode mode, bool conve
          {
             bool imp = mode == _import;
             char * port = PrintString(imp ? "extern " : "", !python ? imp ? "THIS_LIB_IMPORT " : "LIB_EXPORT " : "");
+            if(!strcmp(p.fpnSet, "AnchorValue_from_int"))
+               shh();
             z.printxln(port, g_.sym._property, " * ", p.p, ";");
             if(pt.Set)
             {
@@ -1506,6 +1513,8 @@ SpecsList astTypeSpec(TypeInfo ti, int * indirection, Type * resume, SpecsList t
          {
             char * symbolName = g_.allocMacroSymbolName(nativeSpec, C, { }, name, null, 0);
             quals.Add(SpecName { name = symbolName });
+            if(vTop && vTop.kind == vclass && !strcmp(vTop.c.name, "BinaryTree"))
+               shh();
             if(vTopOutputType && (_class || t._class.registered))
                vTop.processDependency(vTopOutputType, otypedef, _class ? _class : t._class.registered);
          }

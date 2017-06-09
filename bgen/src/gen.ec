@@ -129,6 +129,13 @@ private:
    virtual void processFunctions(BNamespace n);
    virtual void processClasses(BNamespace n);
 
+   //virtual void onDefine(DefinedExpression df);
+   //virtual void onFunction(GlobalFunction fn);
+   //virtual void onClass(Class cl);
+   //virtual void onMethod();
+   //virtual void onProperty();
+   //virtual void onConversion();
+
    ~Gen()
    {
       reset();
@@ -748,6 +755,7 @@ class BModule : struct
       BTemplaton t;
       BTemplatonKey key { (uintptr)0, (uintptr)cl };
       MapIterator<BTemplatonKey, BTemplaton> i { map = templatons };
+      assert(nspace != null);
       if(i.Index(key, true)) t = i.data;
       else i.data = t = BTemplaton { null, cl, nspace }, t.init();
       return t;
@@ -1834,6 +1842,10 @@ void collectBackwardsDependencies(AVLTree<BOutputPtr> in, AVLTree<BNamespacePtr>
       if(!deps.Find(e))
       {
          BNamespace n = d.nspace;
+         ASTNode xn = d.output.count ? d.output.firstIterator.data : null;
+         //const char * t = xn
+         if(!n && xn)
+            astPrint(xn, console, true);
          assert(n != null);
          if(!selfOrAboveNamespace.Find((BNamespacePtr)n))
          {

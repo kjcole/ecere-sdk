@@ -3,6 +3,9 @@
    "ModuleName" : "console",
    "Options" : {
       "Warnings" : "All",
+      "PreprocessorDefinitions" : [
+         "EXPORT_EC"
+      ],
       "IncludeDirs" : [
          "../.."
       ],

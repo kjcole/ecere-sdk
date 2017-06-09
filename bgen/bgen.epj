@@ -19,7 +19,11 @@
             "PreprocessorDefinitions" : [
                "_DEBUG"
             ],
-            "FastMath" : false
+            "FastMath" : false,
+            "PostbuildCommands" : [
+               "-py -m py_compile $(BIND_PY_DIR)/pyeC.py $(BIND_PY_DIR)/pyecere.py $(BIND_PY_DIR)/pyEDA.py",
+               "-py -m py_compile $(BIND_PY_TEST_DIR)/pygnosis2.py"
+            ]
          }
       },
       {
@@ -104,6 +108,12 @@
             "gen.ec",
             "debug.ec",
             "miscTypes.ec"
+         ]
+      },
+      {
+         "Folder" : "redj-extras",
+         "Files" : [
+            "../../../r/redj-extras/anyKeyPause.ec"
          ]
       }
    ],
