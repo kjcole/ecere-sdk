@@ -1,60 +1,60 @@
 import "genC"
 
-void cHeader(AST out, CGen g)
+void cHeader(CGen g)
 {
    if(!python)
    {
-      cInHeaderFileComment(out, g);
-      cInHeaderProcessSourceFile(out, g, null, ":src/c/c_header_open.src");
-      cInHeaderIncludes(out, g);
-      cInHeaderModuleName(out, g);
+      cInHeaderFileComment(g);
+      cInHeaderProcessSourceFile(g, null, ":src/c/c_header_open.src");
+      cInHeaderIncludes(g);
+      cInHeaderModuleName(g);
 
       if(g.lib.ecereCOM)
       {
-         cInHeaderEcereComRuntimeFunctions(out, g);
-         cInHeaderProcessSourceFile(out, g, "binding macros", ":src/c/c_header_ec_macros.src");
+         cInHeaderEcereComRuntimeFunctions(g);
+         cInHeaderProcessSourceFile(g, "binding macros", ":src/c/c_header_ec_macros.src");
       }
       else if(g.lib.ecere)
-         cInHeaderEcereRuntimeMacros(out, g);
+         cInHeaderEcereRuntimeMacros(g);
       else if(g.lib.eda)
-         cInHeaderEDARuntimeMacros(out, g);
+         cInHeaderEDARuntimeMacros(g);
 
       if(g.lib.ecereCOM)
-         cInHeaderProcessSourceFile(out, g, "HARDCODED", ":src/c/c_header_ec_hardcoded.src");
+         cInHeaderProcessSourceFile(g, "HARDCODED", ":src/c/c_header_ec_hardcoded.src");
    }
    else
    {
       if(g.lib.ecereCOM)
-         cInHeaderProcessSourceFile(out, g, "HARDCODED", ":src/py/cffi_hardcode_ec_begin.src");
+         cInHeaderProcessSourceFile(g, "HARDCODED", ":src/py/cffi_hardcode_ec_begin.src");
    }
 
-   cInHeaderTypes(out, g);
+   cInHeaderTypes(g);
 
-   cInHeaderDynamicLinkFunctionImports(out, g);
+   cInHeaderDynamicLinkFunctionImports(g);
    if(g.lib.ecereCOM)
-      cInHeaderThisModule(out, g);
-   cInHeaderLibraryInitPrototype(out, g);
+      cInHeaderThisModule(g);
+   cInHeaderLibraryInitPrototype(g);
    if(!python)
-      cInHeaderProcessSourceFile(out, g, null, ":src/c/c_header_close.src");
+      cInHeaderProcessSourceFile(g, null, ":src/c/c_header_close.src");
    else
    {
       if(g.lib.ecereCOM)
-         cInHeaderProcessSourceFile(out, g, "HARDCODED", ":src/py/cffi_hardcode_ec_end.src");
+         cInHeaderProcessSourceFile(g, "HARDCODED", ":src/py/cffi_hardcode_ec_end.src");
    }
 }
 
-static void cInHeaderTypes(AST out, CGen g)
+static void cInHeaderTypes(CGen g)
 {
    AVLTree<UIntPtr> nodes { };
    for(nn : g.bmod.orderedNamespaces)
    {
       BNamespace n = nn;
       for(a : n.output)
-         out.Add(a);
+         g.astAdd(a, false);
       if(n.orderedBackwardsOutputs.count)
       {
          if(!python)
-            out.Add(ASTRawString { string = CopyString("// start -- moved backwards outputs") });
+            g.astAdd(ASTRawString { string = CopyString("// start -- moved backwards outputs") }, true);
          for(optr : n.orderedBackwardsOutputs)
          {
             BOutput o = (BOutput)optr;
@@ -63,12 +63,12 @@ static void cInHeaderTypes(AST out, CGen g)
                if(!nodes.Find((UIntPtr)node)) // damn it! why is this needed? :S
                {
                   nodes.Add((UIntPtr)node);
-                  out.Add(node);
+                  g.astAdd(node, false);
                }
             }
          }
          if(!python)
-            out.Add(ASTRawString { string = CopyString("// end -- moved backwards outputs") });
+            g.astAdd(ASTRawString { string = CopyString("// end -- moved backwards outputs") }, true);
       }
       for(optr : n.orderedOutputs)
       {
@@ -81,7 +81,7 @@ static void cInHeaderTypes(AST out, CGen g)
                if(!nodes.Find((UIntPtr)node)) // damn it! why is this needed? :S
                {
                   nodes.Add((UIntPtr)node);
-                  out.Add(node);
+                  g.astAdd(node, false);
                }
             }
          }
@@ -96,12 +96,12 @@ static void cInHeaderTypes(AST out, CGen g)
       {
          BVariant v = vv;
          if(v.kind == vclass && v.c.outClassPointer)
-            out.Add(v.c.outClassPointer.output.firstIterator.data);
+            g.astAdd(v.c.outClassPointer.output.firstIterator.data, false);
       }
    }
 }
 
-static void cInHeaderProcessSourceFile(AST out, Gen g, const char * comment, const char * pathToFile)
+static void cInHeaderProcessSourceFile(CGen g, const char * comment, const char * pathToFile)
 {
    ASTRawString raw { }; DynamicString z { };
    if(comment && !python)
@@ -111,10 +111,10 @@ static void cInHeaderProcessSourceFile(AST out, Gen g, const char * comment, con
    if(z[z.count-1] == '\n');
       z[z.count-1] = 0;
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderFileComment(AST out, Gen g)
+static void cInHeaderFileComment(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    if(g.lib.ecereCOM)
@@ -123,10 +123,10 @@ static void cInHeaderFileComment(AST out, Gen g)
       bigCommentLibrary(z, (s = PrintString(g.lib.moduleName, " Module"))), delete s;
    raw.string = CopyString(z.array); delete z;
    s = g.lib.ecereCOM ? CopyString("//// Core eC Library") : PrintString("//// ", g.lib.moduleName, " Module");
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderIncludes(AST out, Gen g)
+static void cInHeaderIncludes(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    bigCommentSection(z, "includes");
@@ -143,10 +143,10 @@ static void cInHeaderIncludes(AST out, Gen g)
          z.printxln("#include \"", libDep.bindingName, ".h\"");
    }
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderModuleName(AST out, CGen g)
+static void cInHeaderModuleName(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.printxln("");
@@ -182,10 +182,10 @@ static void cInHeaderModuleName(AST out, CGen g)
 
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderEcereComRuntimeFunctions(AST out, Gen g)
+static void cInHeaderEcereComRuntimeFunctions(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -210,7 +210,7 @@ static void cInHeaderEcereComRuntimeFunctions(AST out, Gen g)
    }
    ns.cleanup();
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
 char * getFunctionNameThing(BFunction f)
@@ -245,7 +245,7 @@ char * getFunctionNameThing(BFunction f)
    return s;
 }
 
-static void cInHeaderEcereRuntimeMacros(AST out, Gen g)
+static void cInHeaderEcereRuntimeMacros(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.printxln("#define ", g.lib.defineName, "_APP_INTRO(c) \\");
@@ -260,10 +260,10 @@ static void cInHeaderEcereRuntimeMacros(AST out, Gen g)
    z.printxln("");
    z.printxln("#define GUIAPP_INTRO ", g.lib.defineName, "_APP_INTRO(GuiApplication)");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderEDARuntimeMacros(AST out, Gen g)
+static void cInHeaderEDARuntimeMacros(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.printxln("#define EDA_APP_INTRO(c) \\");
@@ -275,10 +275,10 @@ static void cInHeaderEDARuntimeMacros(AST out, Gen g)
    z.printxln("");
    z.printxln("#define EDA_GUIAPP_INTRO EDA_APP_INTRO(GuiApplication)");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderLibraryInitPrototype(AST out, Gen g)
+static void cInHeaderLibraryInitPrototype(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    if(g.lib.ecereCOM)
@@ -286,10 +286,10 @@ static void cInHeaderLibraryInitPrototype(AST out, Gen g)
    else
       z.printxln("extern ", !python ? "THIS_LIB_IMPORT " : "", g_.sym.module, " ", g.lib.bindingName, "_init(", g_.sym.module, " fromModule);");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderDynamicLinkFunctionImports(AST out, Gen g)
+static void cInHeaderDynamicLinkFunctionImports(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    bool prefixed = false;
@@ -309,21 +309,22 @@ static void cInHeaderDynamicLinkFunctionImports(AST out, Gen g)
          }
          if(f.isDllExport)
          {
+            TypeInfo qti;
             const char * fname = !python ? f.gname : f.easy ? f.easy : getFunctionNameThing(f);
-            ASTNode node = astFunction(fname, { type = fn.dataType, fn = fn }, { _extern = true, _dllimport = true }, null);
+            ASTNode node = astFunction(fname, (qti = { type = fn.dataType, fn = fn }), { _extern = true, _dllimport = true }, null); delete qti;
             ec2PrintToDynamicString(z, node, true);
          }
       }
    }
    ns.cleanup();
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInHeaderThisModule(AST out, Gen g)
+static void cInHeaderThisModule(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.printxln("extern ", g_.sym.module, " __thisModule;");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }

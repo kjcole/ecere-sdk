@@ -244,7 +244,8 @@ class PythonGen : CGen
       out = FileOpen(cffiFilePath, write);
       if(out)
       {
-         cHeader(astCFFI, this);
+         ast = astCFFI;
+         cHeader(this);
          astCFFI.print(out, { });
          delete out;
       }

@@ -389,6 +389,10 @@ public:
          return "<<<<unknown>>>>";
       }
    }
+   ~BVariant()
+   {
+      dependencies.Free();
+   }
 private:
    union
    {
@@ -471,6 +475,8 @@ enum BOutputType
    }
 };
 
+AVLTree<UIntPtr> allNodes { };
+
 class BOutput : BVariant
 {
 public:
@@ -483,7 +489,23 @@ private:
 
    ~BOutput()
    {
-      outputDependencies.Free();
+      //PrintLn(output.count, "                    ", name);
+      //output.Free();
+      /*for(o : output)
+      {
+         ASTNode n = o;
+         //delete n;
+         g_.deleteNode(n);
+      }*/
+      //outputDependencies.Free();
+   }
+
+   void addOutput(ASTNode node)
+   {
+      /*if(allNodes.Find((UIntPtr)node))
+         check();
+      allNodes.Add((UIntPtr)node);*/
+      output.Add(node);
    }
 
    bool dependsOn(BOutput x)
@@ -915,15 +937,29 @@ class BNamespace : struct
       name = copyNamespaceFullName(ns, ec1ComponentsApp);
       info = PrintString("// namespace ", (s = copyNamespaceFullName(ns, ec1ComponentsApp))); delete s;
    }
+
    ~BNamespace()
    {
       delete name;
       delete info;
+      /*for(o : output)
+      {
+         ASTNode n = o;
+         g_.deleteNode(n);
+      }*/
       //output.Free();
       orderedOutputs.RemoveAll();
       for(e : dependencies)
          e.RemoveAll();
       dependencies.RemoveAll();
+   }
+
+   void addOutput(ASTNode node)
+   {
+      /*if(allNodes.Find((UIntPtr)node))
+         check();
+      allNodes.Add((UIntPtr)node);*/
+      output.Add(node);
    }
 
    void addContent(BVariant v)
@@ -1573,6 +1609,7 @@ class BProperty : struct
    char * fpnIst; // IsSet
    void init(Property pt, BClass c, Gen gen)
    {
+      TypeInfo qti;
       this.pt = pt;
       this.c = c;
       name = getSymbolNameStringFromTypeString(pt.name, null);
@@ -1601,7 +1638,7 @@ class BProperty : struct
          pt.dataType = ProcessTypeString(pt.dataTypeString, false);
          FinishTemplatesContext(context);
       }
-      t = strTypeName("", { type = pt.dataType, pt = pt, cl = c.cl }, { anonymous = true }, null);
+      t = strTypeName("", (qti = { type = pt.dataType, pt = pt, cl = c.cl }), { anonymous = true }, null); delete qti;
       //else t = null;
       r = (c.cl.type == structClass || c.cl.type == noHeadClass) ? " *" : "";
       if(pt.dataType.kind == classType && pt.dataType._class.registered &&
@@ -1636,7 +1673,7 @@ class BProperty : struct
          }
          else
          {
-            ptType = strTypeName("", { type = pt.dataType, pt = pt, cl = c.cl }, { anonymous = true }, null);
+            ptType = strTypeName("", (qti = { type = pt.dataType, pt = pt, cl = c.cl }), { anonymous = true }, null); delete qti;
             ptTypeUse = CopyString(ptType);
          }
       }

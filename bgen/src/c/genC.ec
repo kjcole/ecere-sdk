@@ -20,6 +20,8 @@ define _noHeadClass = "ClassType_noHeadClass";
 define _unionClass = "ClassType_unionClass";
 define _systemClass = "ClassType_systemClass";
 
+AST ast;
+
 class CGen : Gen
 {
    char * cFileName;
@@ -37,6 +39,31 @@ class CGen : Gen
    Array<BClass> storeClasses { };
    Array<BMethod> storeMethods { };
    Array<BProperty> storeProperties { };
+
+   Array<ASTNode> allNodes { };
+   void astAdd(ASTNode node, bool free)
+   {
+      ast.Add(node);
+      if(free)
+         allNodes.Add(node);
+   }
+
+   AVLTree<UIntPtr> freedNodes { };
+   void resetFreedNodes()
+   {
+      //PrintLn("freedNodes.count: ", freedNodes.count);
+      freedNodes.RemoveAll();
+   }
+   void deleteNode(ASTNode node)
+   {
+      if(freedNodes.Find((UIntPtr)node))
+         PrintLn("already freed node");
+      else
+      {
+         freedNodes.Add((UIntPtr)node);
+         delete node;
+      }
+   }
 
    Map<NameSpacePtr, BNamespace> allNamespaces { };
    Map<UIntPtr, BVariant> allVariants { };
@@ -84,14 +111,16 @@ class CGen : Gen
       o = FileOpen(hFilePath, write);
       if(o)
       {
-         cHeader(astH, this);
+         ast = astH;
+         cHeader(this);
          astH.print(o, { });
          delete o;
       }
       o = FileOpen(cFilePath, write);
       if(o)
       {
-         cCode(astC, this);
+         ast = astC;
+         cCode(this);
          astC.print(o, { });
          delete o;
       }
@@ -193,19 +222,47 @@ class CGen : Gen
 
    void reset()
    {
-      if(astC) astC.Free();
+      //if(astC) astC.Free();
+      /*if(astC)
+      {
+         for(o : astC)
+         {
+            ASTNode n = o;
+            deleteNode(n);
+         }
+         astC.RemoveAll();
+      }*/
       delete astC;
-      if(astH) astH.Free();
+      /*if(astH)
+      {
+         for(o : astH)
+         {
+            ASTNode n = o;
+            deleteNode(n);
+         }
+         astH.RemoveAll();
+      }*/
+      // astH.Free();
       delete astH;
       ec1terminate();
    }
 
    ~CGen()
    {
+      reset();
+
       delete cFileName;
       delete cFilePath;
       delete hFileName;
       delete hFilePath;
+
+      //allNodes.Free();
+      /*for(o : allNodes)
+      {
+         ASTNode n = o;
+         deleteNode(n);
+      }
+      allNodes.RemoveAll();*/
 
       allNamespaces.Free();
       allVariants.Free();
@@ -214,6 +271,19 @@ class CGen : Gen
       allClasses.Free();
       allMethods.Free();
       allProperties.Free();
+
+      mapDefine.Free();
+      mapFunction.Free();
+      mapTypedef.Free();
+      mapClassPointer.Free();
+      mapBitTool.Free();
+      mapEnum.Free();
+      mapStruct.Free();
+      mapMethod.Free();
+      mapProperty.Free();
+      mapConversion.Free();
+
+      resetFreedNodes();
    }
 
    void prepareNamespaces()
@@ -231,7 +301,7 @@ class CGen : Gen
             sectionComment_hdr(z, _ns); sectionComment_msg(z, ns.fullName); sectionComment_ftr(z); z.println("");;
             sectionComment_hdr(z, _ns); sectionComment_msg_line(z);         sectionComment_ftr(z); z.println("");;
             z.println("");
-            n.output.Add(ASTRawString { string = CopyString(z.array) });
+            n.addOutput(ASTRawString { string = CopyString(z.array) });
          }
          bmod.orderedNamespaces.Add(n);
          delete z;
@@ -262,6 +332,7 @@ class CGen : Gen
 
    void manualTypes(BNamespace n)
    {
+      TypeInfo qti;
       MapNode<const String, const String> node;
       for(node = !python ? manualTypedefs.root.minimum : pythonManualTypedefs.root.minimum; node; node = node.next)
       {
@@ -286,7 +357,7 @@ class CGen : Gen
                Class clDep = eSystem_FindClass(mod, node.value);
                assert(clDep != null);
             }
-            out.output.Add(astDeclInit(node.key, createTypedef, ident, spec, { }, null, null));
+            out.addOutput(astDeclInit(node.key, createTypedef, ident, spec, (qti = { }), null, null)); delete qti;
             delete ident;
             delete spec;
          }
@@ -377,13 +448,14 @@ class CGen : Gen
          BTemplaton t = ti;
          if(t.tp)
          {
+            TypeInfo qti;
             BVariant v = t;
             BNamespace n = v.nspace;
             BOutput o = t.outTypedef = bmod.getTypedefOutput((UIntPtr)t, &init); assert(init);
             o.kind = vtemplaton, o.t = t, o.type = otypedef;
             assert(t.nspace == null);
             n.addContent(v);
-            o.output.Add(astDeclInit(t.cname, emptyTypedef, null, null, { t = t }, null, null/*, ast*/));
+            o.addOutput(astDeclInit(t.cname, emptyTypedef, null, null, (qti = { t = t }), null, null/*, ast*/)); delete qti;
          }
       }
    }
@@ -401,7 +473,7 @@ class CGen : Gen
          if(lib.ecereCOM && d.isNull)
          {
             if(!python)
-               out.output.Add(astNullDefine());
+               out.addOutput(astNullDefine());
          }
          else
          {
@@ -421,11 +493,12 @@ class CGen : Gen
          BFunction f = fn;
          if(!f.skip && !f.isDllExport)
          {
+            TypeInfo qti;
             BVariant v = f;
             BOutput out { vfunction, f = f };
             f.nspace.addContent(v);
             f.out = out;
-            out.output.Add(astFunction(f.oname, { type = fn.dataType, fn = fn }, { _extern = true, pointer = true }, v));
+            out.addOutput(astFunction(f.oname, (qti = { type = fn.dataType, fn = fn }), { _extern = true, pointer = true }, v)); delete qti;
          }
       }
    }
@@ -491,7 +564,8 @@ class CGen : Gen
          {
             if(!python || !pythonSkipHardcodedTypedefs.Find(cl.name))
             {
-               o.output.Add(astDeclInit(c.cname, emptyTypedef, null, null, { c = c }, null, null/*, ast*/));
+               TypeInfo qti;
+               o.addOutput(astDeclInit(c.cname, emptyTypedef, null, null, (qti = { c = c }), null, null/*, ast*/)); delete qti;
                {
                   DynamicString z { };
                   ec2PrintToDynamicString(z, o.output.lastIterator.data, false);
@@ -503,16 +577,17 @@ class CGen : Gen
          {
             o = c.outBitTool = bmod.getBitToolOutput((UIntPtr)c, &init); assert(init);
             o.kind = vclass, o.c = c, o.type = obittool;
-            o.output.Add(astBitTool(cl, c));
+            o.addOutput(astBitTool(cl, c));
          }
          else if(cl.type == enumClass)
          {
             o = c.outTypedef;
-            o.output.Add(astEnum(cl, c));
+            o.addOutput(astEnum(cl, c));
          }
          if(c.declStruct) check();
          if(c.hasPublicMembers)
          {
+            TypeInfo qti;
             SpecClass sc;
             ClassDefList defs;
             char * ident = allocMacroSymbolName(false, cl.type == normalClass ? CM : C, { c = c }, c.cname, null, 0);
@@ -521,8 +596,8 @@ class CGen : Gen
             if(cl.type == unitClass) check();
             o = c.outStruct = bmod.getStructOutput((UIntPtr)c, &init); assert(init);
             o.kind = vclass, o.c = c, o.type = ostruct;
-            declStruct = c.declStruct = astDeclInit(c.cname, createStruct, ident, null, { c = c }, null, null);
-            o.output.Add(declStruct);
+            declStruct = c.declStruct = astDeclInit(c.cname, createStruct, ident, null, (qti = { c = c }), null, null); delete qti;
+            o.addOutput(declStruct);
 
             sc = declStruct && declStruct.specifiers ? (SpecClass)declStruct.specifiers.firstIterator.data : null;
             defs = sc ? sc.definitions : null;
@@ -542,7 +617,7 @@ class CGen : Gen
             s = PrintString(skip ? "// " : "", ext, g_.sym.__class, " * ", c.coSymbol, ";");
             o = c.outClassPointer = bmod.getClassPointerOutput((UIntPtr)c, &init); assert(init);
             //o.kind = vclassptr; // todo, set proper kind and type
-            o.output.Add(ASTRawString { string = s });
+            o.addOutput(ASTRawString { string = s });
          }
       }
       if(!cl.templateClass/* && (!lib.ecereCOM || !c.is_class)*/)
@@ -562,7 +637,7 @@ class CGen : Gen
             BVariant v = m;
             assert(m != null);
             o = m.outInHeader = BOutput { vmethod, m = m, omethod };
-            o.output.Add(astMethod(this, md, cl, c, methodFlag, instanceClass, &haveContent, v));
+            o.addOutput(astMethod(this, md, cl, c, methodFlag, instanceClass, &haveContent, v));
             c.outMethods.Add(o);
             c.nspace.addContent(v);
             if(lib.ecereCOM)
@@ -576,7 +651,7 @@ class CGen : Gen
                BMethod m = md;
                BVariant v = m;
                o/* = m.outInHeader*/ = BOutput { vmethod, m = m, omethod };
-               o.output.Add(astMethod(this, md, cl, c, methodFlag, instanceClass, &haveContent, /*v*/null));
+               o.addOutput(astMethod(this, md, cl, c, methodFlag, instanceClass, &haveContent, /*v*/null));
                c.outMethods.Add(o);
                c.nspace.addContent(v);
                v.processDependency(omethod, otypedef, clDepMethod);
@@ -587,7 +662,7 @@ class CGen : Gen
             BProperty p = cn;
             BVariant v = p;
             o = p.outInHeader = BOutput { vproperty, p = p, oconversion };
-            o.output.Add(astProperty(cn, c, _import, false, &c.first, &haveContent));
+            o.addOutput(astProperty(cn, c, _import, false, &c.first, &haveContent));
             c.outProperties.Add(o);
             c.nspace.addContent(v);
             if(lib.ecereCOM)
@@ -598,7 +673,7 @@ class CGen : Gen
             BProperty p = pt;
             BVariant v = p;
             o = p.outInHeader = BOutput { vproperty, p = p, oproperty };
-            o.output.Add(astProperty(pt, c, _import, false, &c.first, &haveContent));
+            o.addOutput(astProperty(pt, c, _import, false, &c.first, &haveContent));
             c.outConversions.Add(o);
             c.nspace.addContent(v);
             processTypeDependency(this, pt.dataType, pt.dataTypeString, oproperty, v);
@@ -674,6 +749,7 @@ enum EnumGenFlag { normal, prototype };
 void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assumeTypedObject, bool forInstance, BVariant vTop)
 {
    uint ap;
+   TypeInfo qti;
    //const char * thisClassName = null;
    Class cl = c.clAlt ? c.clAlt : c.cl;
    Method md = m.md;
@@ -717,8 +793,8 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             {
                Type t = ProcessTypeString(cl.name, false);
                if(prevParam) z.printx(", ");
-               //astTypeName("__i", { type = t, md = md, cl = cl }, { param = true }, vTop, params);
-               zTypeName(z, "__i", { type = t, md = md, cl = cl }, { param = true }, vTop);
+               //astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop, params); delete qti;
+               zTypeName(z, "__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop); delete qti;
                FreeType(t);
                // This 2 different ways to mix stuff up... params & z!!
                //ec2PrintToDynamicString(z, params, false);
@@ -729,7 +805,7 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             if(!md.dataType.staticMethod && !c.is_class)
             {
                if(prevParam) z.printx(", ");
-               zTypeName(z, "__t", { type = t, md = md, cl = cl }, { param = true }, vTop);
+               zTypeName(z, "__t", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop); delete qti;
                prevParam = true;
             }
 
@@ -738,8 +814,8 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
          else if(!md.dataType.staticMethod)
          {
             Type t = ProcessTypeString(cl.name, false);
-            //astTypeName("__i", { type = t, md = md, cl = cl }, { param = true }, vTop, params);
-            zTypeName(z, "__i", { type = t, md = md, cl = cl }, { param = true }, vTop);
+            //astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop, params); delete qti;
+            zTypeName(z, "__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop); delete qti;
             prevParam = true;
             FreeType(t);
          }
@@ -747,8 +823,8 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
          {
             Type t = ProcessTypeString(cl.name, false);
             if(prevParam) z.printx(", ");
-            //astTypeName("__i", { type = t, md = md, cl = cl }, { param = true }, vTop, params);
-            zTypeName(z, "__i", { type = t, md = md, cl = cl }, { param = true }, vTop);
+            //astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop, params); delete qti;
+            zTypeName(z, "__i", (qti = { type = t, md = md, cl = cl }), { param = true }, vTop); delete qti;
             FreeType(t);
             // This 2 different ways to mix stuff up... params & z!!
             //ec2PrintToDynamicString(z, params, false);
@@ -766,11 +842,12 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             char * apname = null;
             if(!param.name)
                apname = PrintString("ap", ++ap);
-            astTypeName(apname ? apname : param.name, { type = param, md = md, cl = cl }, { param = true }, vTop, params);
+            astTypeName(apname ? apname : param.name, (qti = { type = param, md = md, cl = cl }), { param = true }, vTop, params); delete qti;
             delete apname;
          }
       }
       ec2PrintToDynamicString(z, params, false);
+      params.Free();
    }
    z.printxln(");");
 
@@ -790,13 +867,13 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
          TypeNameList params { };
          {
             Type t = ProcessTypeString(cl.name, false);
-            astTypeName((c.is_class/* && !forInstance*/) ? "__c" : "__i", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+            astTypeName((c.is_class/* && !forInstance*/) ? "__c" : "__i", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
             FreeType(t);
          }
          if(c.is_class/* && !forInstance*/)
          {
             Type t = ProcessTypeString(cl.name, false);
-            astTypeName("__i", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+            astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
             FreeType(t);
          }
          else if(!forInstance && md && cl && !md.dataType.staticMethod)
@@ -804,7 +881,7 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             if(md.dataType.thisClass && md.dataType.thisClass.string)
             {
                Type t = ProcessTypeString(md.dataType.thisClass.string, false);
-               astTypeName("__t", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+               astTypeName("__t", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
                FreeType(t);
             }
          }
@@ -815,11 +892,12 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             {
                char * apname = null;
                if(!param.name) apname = PrintString("ap", ++ap);
-               astTypeName(apname ? apname : param.name, { type = param, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+               astTypeName(apname ? apname : param.name, (qti = { type = param, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
                delete apname;
             }
          }
          ec2PrintToDynamicString(z, params, false);
+         params.Free();
       }
 
    z.printx(")");
@@ -855,7 +933,7 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
                if(!md.dataType.staticMethod)
                {
                   // Note: this should really be checking typed_object right here
-                  zTypeName(z, "__c", { type = ProcessTypeString("Class", false), md = md, cl = cl }, { anonymous = true, param = true }, vTop);
+                  zTypeName(z, "__c", (qti = { type = ProcessTypeString("Class", false), md = md, cl = cl }), { anonymous = true, param = true }, vTop); delete qti;
                   prevParam = true;
                }
                if(prevParam) z.printx(" _ARG ");
@@ -866,7 +944,7 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             if(!md.dataType.staticMethod && !c.is_class)
             {
                if(prevParam) z.printx(" _ARG ");
-               zTypeName(z, "__t", { type = t, md = md, cl = cl }, { anonymous = true, param = true }, vTop);
+               zTypeName(z, "__t", (qti = { type = t, md = md, cl = cl }), { anonymous = true, param = true }, vTop); delete qti;
                prevParam = true;
             }
 
@@ -875,7 +953,7 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
          else if(!md.dataType.staticMethod)
          {
             Type t = ProcessTypeString(cl.name, false);
-            astTypeName("__i", { type = t, md = md, cl = cl }, { anonymous = true, param = true }, vTop, params);
+            astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { anonymous = true, param = true }, vTop, params); delete qti;
             FreeType(t);
          }
       }
@@ -889,11 +967,12 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             char * apname = null;
             if(!param.name)
                apname = PrintString("ap", ++ap);
-            astTypeName(apname ? apname : param.name, { type = param, md = md, cl = cl }, { anonymous = true, param = true }, vTop, params);
+            astTypeName(apname ? apname : param.name, (qti = { type = param, md = md, cl = cl }), { anonymous = true, param = true }, vTop, params); delete qti;
             delete apname;
          }
       }
          ec2PrintToDynamicString(z, params, false);
+         params.Free();
       }
       z.printx(", \\\n      ");
       // function call arguments
@@ -905,15 +984,17 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             if(md.dataType.thisClass && md.dataType.thisClass.string)
             {
                Type t = ProcessTypeString(md.dataType.thisClass.string, false);
-               astTypeName(c.is_class ? forInstance ? "(__i) ? (__i)->_class : (__c)" : "__c" : "__t", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+               astTypeName(c.is_class ? forInstance ? "(__i) ? (__i)->_class : (__c)" : "__c" : "__t", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
                if(c.is_class)
-                  astTypeName("__i", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+               {
+                  astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
+               }
                FreeType(t);
             }
             else
             {
                Type t = ProcessTypeString(cl.name, false);
-               astTypeName("__i", { type = t, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+               astTypeName("__i", (qti = { type = t, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
                FreeType(t);
             }
          }
@@ -926,11 +1007,12 @@ void cgenPrintVirtualMethodDefs(DynamicString z, BClass c, BMethod m, bool assum
             char * apname = null;
             if(!param.name)
                apname = PrintString("ap", ++ap);
-            astTypeName(apname ? apname : param.name, { type = param, md = md, cl = cl }, { notype = true, param = true }, vTop, params);
+            astTypeName(apname ? apname : param.name, (qti = { type = param, md = md, cl = cl }), { notype = true, param = true }, vTop, params); delete qti;
             delete apname;
          }
          }
          ec2PrintToDynamicString(z, params, false);
+         params.Free();
       }
       z.printx(")");
    }
@@ -1137,7 +1219,10 @@ DeclarationInit astDeclInit(const char * name, CreateDeclInitMode mode,
                s = astTypeSpec(ti, &ptr3, &t3, null, { }, vTop);
                decl = DeclFunction { declarator = DeclBrackets { declarator = astDeclPointer(ptr2, declIdent) }, parameters = list };
                for(param = t2.params.first; param; param = param.next)
-                  astTypeName(param.name, { type = param }, { }, vTop, list);
+               {
+                  TypeInfo qti;
+                  astTypeName(param.name, (qti = { type = param }), { }, vTop, list); delete qti;
+               }
             }
          }
          else if(ti.dm.dataType.bitFieldCount)
@@ -1491,6 +1576,7 @@ void zTypeName(DynamicString z, const char * ident, TypeInfo ti, OptBits opt, BV
    TypeNameList list { };
    astTypeName(ident, ti, opt, vTop, list);
    ec2PrintToDynamicString(z, list, false);
+   list.Free();
    delete list;
 }
 
@@ -1571,7 +1657,10 @@ void astTypeName(const char * ident, TypeInfo ti, OptBits opt, BVariant vTop, Ty
          decl = DeclFunction { declarator = DeclBrackets { declarator = astDeclPointer(ptr, decl) }, parameters = list };
          ptr = 0;
          for(param = t.params.first; param; param = param.next)
-            astTypeName(param.name, { type = param }, opt, vTop, list);
+         {
+            TypeInfo qti;
+            astTypeName(param.name, (qti = { type = param }), opt, vTop, list); delete qti;
+         }
       }
       tn = { qualifiers = quals, declarator = (ptr && !opt.notype) ? astDeclPointer(ptr, decl) : decl };
       list.Add(tn);
@@ -1862,6 +1951,7 @@ ASTRawString astDefine(DefinedExpression df, BDefine d, Expression e, BVariant v
 
 ASTRawString astEnum(Class cl, BClass c)
 {
+   TypeInfo qti;
    ASTRawString raw { };
    DynamicString z { };
    EnumClassData enumeration = (EnumClassData)cl.data;
@@ -1869,7 +1959,7 @@ ASTRawString astEnum(Class cl, BClass c)
    NamedLink item;
    if(c.isBool)
    {
-      ASTNode node = astDeclInit(c.cname, emptyTypedef, null, null, { c = c }, null, null/*, ast*/);
+      ASTNode node = astDeclInit(c.cname, emptyTypedef, null, null, (qti = { c = c }), null, null/*, ast*/); delete qti;
       ec2PrintToDynamicString(z, node, true);
       if(!python)
       {
@@ -1892,7 +1982,7 @@ ASTRawString astEnum(Class cl, BClass c)
             z.println("#else");
          }
          {
-            ASTNode node = astDeclInit(c.cname, emptyTypedef, null, null, { c = c }, null, null/*, ast*/);
+            ASTNode node = astDeclInit(c.cname, emptyTypedef, null, null, (qti = { c = c }), null, null/*, ast*/); delete qti;
             ec2PrintToDynamicString(z, node, true);
          }
          if(!python)
@@ -2051,7 +2141,8 @@ ASTRawString astMethod(CGen g, Method md, Class cl, BClass c, MethodGenFlag meth
             if(md.dataType.kind != functionType)
                PrintLn(m.n, " ", md.dataType.kind, " ", md.dataTypeString);
             {
-            ASTNode node = astFunction(m.n, { type = md.dataType, md = md, cl = cl }, { _extern = true, pointer = true }, vTop);
+            TypeInfo qti;
+            ASTNode node = astFunction(m.n, (qti = { type = md.dataType, md = md, cl = cl }), { _extern = true, pointer = true }, vTop); delete qti;
             ec2PrintToDynamicString(z, node, true);
             *haveContent = true;
             }
@@ -2147,11 +2238,12 @@ void addDataMemberToDeclInit(CGen g, DataMember dm, ClassDefList defs, BClass c,
          FinishTemplatesContext(context);
       }
       {
+         TypeInfo qti;
          ASTClassDef def = null;
          if(local)
             processTypeDependency(g, dm.dataType, dm.dataTypeString, ostruct, cTop);
 
-         def = astClassDefDecl(dm.name, { type = dm.dataType, dm = dm, cl = cl }, cTop);
+         def = astClassDefDecl(dm.name, (qti = { type = dm.dataType, dm = dm, cl = cl }), cTop); delete qti;
          if(!def) check();
          if(def)
             defs.Add(def);

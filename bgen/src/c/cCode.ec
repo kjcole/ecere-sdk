@@ -3,39 +3,39 @@ import "genC"
 const char * indent;
 const char * findin;
 
-void cCode(AST out, CGen g)
+void cCode(CGen g)
 {
    indent = g.lib.ecereCOM ? "         " : "      ";
    findin = g.lib.ecereCOM ? "app" : "module";
 
-   cInCodeStart(out, g);
-   cInCodeGlobalFunctionPointers(out, g);
-   cInCodeVirtualMethods(out, g);
-   cInCodeMethodFunctionPointers(out, g);
-   cInCodeProperties(out, g);
+   cInCodeStart(g);
+   cInCodeGlobalFunctionPointers(g);
+   cInCodeVirtualMethods(g);
+   cInCodeMethodFunctionPointers(g);
+   cInCodeProperties(g);
 
-   cInCodeClassPointers(out, g);
-   cInCodeVirtualMethodIDs(out, g);
-   cInCodeGlobalFunctions(out, g);
+   cInCodeClassPointers(g);
+   cInCodeVirtualMethodIDs(g);
+   cInCodeGlobalFunctions(g);
 
-   cInCodeInitStart(out, g);
-   cInCodeInitClasses(out, g);
-   cInCodeInitFunctions(out, g);
-   cInCodeInitEnd(out, g);
+   cInCodeInitStart(g);
+   cInCodeInitClasses(g);
+   cInCodeInitFunctions(g);
+   cInCodeInitEnd(g);
    if(g.lib.ecereCOM)
-      cInCodeThisModule(out, g);
+      cInCodeThisModule(g);
 }
 
-static void cInCodeStart(AST out, CGen g)
+static void cInCodeStart(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.printxln("#include \"", g.lib.bindingName, ".h\"");
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeGlobalFunctionPointers(AST out, CGen g)
+static void cInCodeGlobalFunctionPointers(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -53,10 +53,10 @@ static void cInCodeGlobalFunctionPointers(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeVirtualMethods(AST out, CGen g)
+static void cInCodeVirtualMethods(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -85,10 +85,10 @@ static void cInCodeVirtualMethods(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeMethodFunctionPointers(AST out, CGen g)
+static void cInCodeMethodFunctionPointers(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -112,7 +112,8 @@ static void cInCodeMethodFunctionPointers(AST out, CGen g)
                   m.init(md, c);
                   if(md.type == normalMethod)
                   {
-                     ASTNode node = astFunction(m.s, { type = md.dataType, md = md, cl = cl, m = m, c = c }, { pointer = true }, null);
+                     TypeInfo qti;
+                     ASTNode node = astFunction(m.s, (qti = { type = md.dataType, md = md, cl = cl, m = m, c = c }), { pointer = true }, null); delete qti;
                      ec2PrintToDynamicString(z, node, true);
                   }
                   haveContent = true;
@@ -125,10 +126,10 @@ static void cInCodeMethodFunctionPointers(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeProperties(AST out, CGen g)
+static void cInCodeProperties(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -144,19 +145,19 @@ static void cInCodeProperties(AST out, CGen g)
             Property pt; IterProperty prop { cl };
             Property cn; IterConversion conv { cl };
             while((pt = prop.next(publicOnly)))
-               out.Add(astProperty(pt, c, _define, false, &c.first, null));
+               g.astAdd(astProperty(pt, c, _define, false, &c.first, null), true);
             while((cn = conv.next(publicOnly)))
-               out.Add(astProperty(cn, c, _define, false, &c.first, null));
+               g.astAdd(astProperty(cn, c, _define, false, &c.first, null), true);
          }
       }
    }
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeClassPointers(AST out, CGen g)
+static void cInCodeClassPointers(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -276,10 +277,10 @@ static void cInCodeClassPointers(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeVirtualMethodIDs(AST out, CGen g)
+static void cInCodeVirtualMethodIDs(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -308,10 +309,10 @@ static void cInCodeVirtualMethodIDs(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeGlobalFunctions(AST out, CGen g)
+static void cInCodeGlobalFunctions(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -324,7 +325,8 @@ static void cInCodeGlobalFunctions(AST out, CGen g)
          BFunction f = fn;
          if(!f.skip && !f.isDllExport)
          {
-            ASTNode node = astFunction(f.oname, { type = fn.dataType, fn = fn }, { pointer = true }, null);
+            TypeInfo qti;
+            ASTNode node = astFunction(f.oname, (qti = { type = fn.dataType, fn = fn }), { pointer = true }, null); delete qti;
             ec2PrintToDynamicString(z, node, true);
          }
       }
@@ -332,10 +334,10 @@ static void cInCodeGlobalFunctions(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeInitClasses(AST out, CGen g)
+static void cInCodeInitClasses(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -393,7 +395,8 @@ static void cInCodeInitClasses(AST out, CGen g)
                   {
                      z.printx(indent, "      ", m.s, " = (");
                      {
-                        ASTNode node = astFunction(null, { type = md.dataType, md = md, cl = cl }, { pointer = true, anonymous = true }, null);
+                        TypeInfo qti;
+                        ASTNode node = astFunction(null, (qti = { type = md.dataType, md = md, cl = cl }), { pointer = true, anonymous = true }, null); delete qti;
                         ec2PrintToDynamicString(z, node, true);
                         z.size -= 2;
                      }
@@ -420,10 +423,10 @@ static void cInCodeInitClasses(AST out, CGen g)
    ns.cleanup();
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeInitFunctions(AST out, CGen g)
+static void cInCodeInitFunctions(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    IterNamespace ns { module = g.mod };
@@ -446,10 +449,10 @@ static void cInCodeInitFunctions(AST out, CGen g)
    }
    ns.cleanup();
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeInitStart(AST out, CGen g)
+static void cInCodeInitStart(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    if(g.lib.ecereCOM)
@@ -484,10 +487,10 @@ static void cInCodeInitStart(AST out, CGen g)
    z.printxln(indent, "// Set up all the CO(x) *, property, method, ...");
    z.printxln("");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeInitEnd(AST out, CGen g)
+static void cInCodeInitEnd(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    if(g.lib.ecereCOM)
@@ -506,14 +509,14 @@ static void cInCodeInitEnd(AST out, CGen g)
       z.printxln("   return module;");
    z.printx("}");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
 
-static void cInCodeThisModule(AST out, CGen g)
+static void cInCodeThisModule(CGen g)
 {
    ASTRawString raw { }; DynamicString z { };
    z.println("");
    z.printxln(g_.sym.module, " __thisModule;");
    raw.string = CopyString(z.array); delete z;
-   out.Add(raw);
+   g.astAdd(raw, true);
 }
