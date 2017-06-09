@@ -26,6 +26,12 @@ public:
 //public:
    virtual void print(File out, OutputOptions o);
 
+   /*void OnFree()
+   {
+      Free();
+      delete this;
+   }*/
+
    void printStart(File out, OutputOptions o)
    {
       if(o.astType)
@@ -77,12 +83,30 @@ public:
          nonBreakableIncoming++;
    }
 
+   ASTNode()
+   {
+      /*Print("ASTNode()", " -- ");
+      printClassLineage(this._class);
+      PrintLn("");*/
+   }
+
    ~ASTNode()
    {
       if(this)
+      {
+         /*Print("~ASTNode()", " -- ");
+         printClassLineage(this._class);
+         PrintLn("");*/
          Free();
+      }
    }
 }
+
+/*void printClassLineage(Class cl)
+{
+   Print(cl.name, " ");
+   if(cl.base) printClassLineage(cl.base);
+}*/
 
 public class ASTRawString : ASTNode
 {
@@ -155,6 +179,7 @@ public:
 public:
    void OnFree()
    {
+      //if(list) list.Free();
       Free();
       delete list;
       delete this;

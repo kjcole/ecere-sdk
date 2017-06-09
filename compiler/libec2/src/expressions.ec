@@ -960,5 +960,6 @@ public:
       delete exp;
 
       delete members;
+      // delete symbol;
    }
 };

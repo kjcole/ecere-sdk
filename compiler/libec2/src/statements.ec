@@ -750,8 +750,10 @@ public:
 
    ~StmtForEach()
    {
+      // delete id;
       delete exp;
       delete filter;
+      // delete stmt;
    }
 }
 

@@ -21,6 +21,9 @@ public:
 
    ~ASTDeclaration()
    {
+      //delete type;
+      //delete extStorage;
+      //delete symbol;
    }
 }
 

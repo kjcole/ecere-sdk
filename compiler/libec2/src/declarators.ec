@@ -74,6 +74,7 @@ public:
    ~ASTDeclarator()
    {
       delete declarator;
+      // delete symbol;
    }
 }
 
@@ -224,6 +225,7 @@ public:
    ~DeclArray()
    {
       delete exp;
+      // delete enumClass;
    }
 }
 
@@ -305,6 +307,7 @@ public:
 
    ~DeclExtended()
    {
+      // delete extended;
    }
 }
 

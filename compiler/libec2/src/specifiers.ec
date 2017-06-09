@@ -14,6 +14,7 @@ public:
 
    ~SpecTypeOf()
    {
+      // delete expression;
    }
 }
 
@@ -118,6 +119,10 @@ public:
    ~SpecName()
    {
       delete name;
+      // delete extDecl;
+      // delete symbol;
+      // if(templateArgs) templateArgs.Free();
+      // delete templateArgs
    }
 }
 
@@ -194,6 +199,10 @@ public:
       delete id;
       delete baseSpecs;
       delete definitions;
+
+      // delete _class;
+      // delete symbol;
+      // delete extDeclStruct;
    }
 }
 
