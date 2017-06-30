@@ -2226,23 +2226,26 @@ private:
             {
                for(c : configurations)
                {
-                  if(c.options && !c.options.isEmpty)
+                  if(!strcmp(c.name, prjConfig.name))
                   {
-                     hasPerNodeOptions = true;
-                     break;
-                  }
-                  if(c.platforms)
-                  {
-                     for(p : c.platforms)
+                     if(c.options && !strcmp(c.name, prjConfig.name) && !c.options.isEmpty)
                      {
-                        if(p.options && !p.options.isEmpty)
-                        {
-                           hasPerNodeOptions = true;
-                           break;
-                        }
-                     }
-                     if(hasPerNodeOptions)
+                        hasPerNodeOptions = true;
                         break;
+                     }
+                     if(c.platforms)
+                     {
+                        for(p : c.platforms)
+                        {
+                           if(p.options && !p.options.isEmpty)
+                           {
+                              hasPerNodeOptions = true;
+                              break;
+                           }
+                        }
+                        if(hasPerNodeOptions)
+                           break;
+                     }
                   }
                }
             }
@@ -2257,7 +2260,6 @@ private:
                   }
                }
             }
-
          }
          if(hasPerNodeOptions)
          {
@@ -2305,7 +2307,7 @@ private:
                      cflags.concatf(" \\\n\t $(if $(%s),%s,)", PlatformToMakefileTargetVariable(platform), (String)s);
                   delete s;
                   s = { };
-                  GenECFlagsFromProjectOptions(byFileConfigPlatformProjectOptions, prjWithEcFiles, s);
+                  GenECFlagsFromProjectOptions(byFileConfigPlatformProjectOptions, prjWithEcFiles, false, s);
                   if(s.count > 1)
                      ecflags.concatf(" \\\n\t $(if $(%s),%s,)", PlatformToMakefileTargetVariable(platform), (String)s);
                   delete s;
@@ -2321,7 +2323,7 @@ private:
                }
                delete s;
                s = { };
-               GenECFlagsFromProjectOptions(platformsCommonOptions, prjWithEcFiles, s);
+               GenECFlagsFromProjectOptions(platformsCommonOptions, prjWithEcFiles, true, s);
                if(s.count > 1)
                {
                   ecflags.concat(" \\\n\t");
@@ -3075,8 +3077,7 @@ static void RemovePlatformsCommonStrings(Map<String, bool> common, Array<String>
 
 static void GenMakePrintNodeFlagsVariable(ProjectNode node, Map<intptr, int> nodeFlagsMapping, const String variableName, File f)
 {
-   int customFlags;
-   customFlags = nodeFlagsMapping[(intptr)node];
+   int customFlags = nodeFlagsMapping[(intptr)node];
    if(customFlags > 1)
       f.Printf(" $(CUSTOM%d_%s)", customFlags-1, variableName);
    else
@@ -3142,8 +3143,12 @@ static void GenCFlagsFromProjectOptions(ProjectOptions options, bool prjWithEcFi
       ListOptionToDynamicString(s, _I, options.includeDirs, true, lineEach, "\t\t\t");
 }
 
-static void GenECFlagsFromProjectOptions(ProjectOptions options, bool prjWithEcFiles, DynamicString s)
+static void GenECFlagsFromProjectOptions(ProjectOptions options, bool prjWithEcFiles, bool platformsCommon, DynamicString s)
 {
+   // re issue #1089
+   // ...
+   if(platformsCommon)
+      s.concat(" -module $(MODULE)");
    if(options.memoryGuard == true)
       s.concat(" -memguard");
    if(options.noLineNumbers == true)
