@@ -77,7 +77,13 @@
                "Folder" : "cpp",
                "Files" : [
                   "genCPP.ec",
-                  "cppHardcoded.ec"
+                  "cppHardcoded.ec",
+                  {
+                     "FileName" : "cppDiscard.ec",
+                     "Options" : {
+                        "ExcludeFromBuild" : true
+                     }
+                  }
                ]
             },
             {
