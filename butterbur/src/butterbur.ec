@@ -1,5 +1,7 @@
 import "ecere"
 
+//import "timeTools"
+
 import "tesselation"
 
 //#include "glHelpers.h"
@@ -61,6 +63,35 @@ class ButterburTest : Window
    hasMinimize = true;
    hasClose = true;
    clientSize = { 632, 438 };
+
+   Timer t
+   {
+      delay = 0.2;
+      started = true;
+      userData = this;
+
+      bool DelayExpired()
+      {
+         int a;
+         DateTime now;
+         now.GetLocalTime();
+         //RandomSeed(uint seed)
+         //GetRandom(int lo, int hi)
+         for(a = 1; a < 16; a++)
+         {
+            int x = (now.month * now.second / a) % clientSize.w + a * 2.4;
+            int y = (now.year * now.minute / a) % clientSize.h + a * 2.4;
+            BBRectangle rect
+            {
+               scene,
+               box = { x, y, x + 48, y + 48 }, rx = 20, ry = 20,
+               lineColor = { 230, red }, fillColor = { 40, black }, cap = capType, join = joinType, lineWidth = 4
+            };
+         }
+         Update(null);
+         return true;
+      }
+   };
 
    BBScene scene { };
 
@@ -161,9 +192,13 @@ class ButterburTest : Window
 
    void OnRedraw(Surface surface)
    {
+      //TimeMeasure m;
+      //m.begin();
       display.antiAlias = true;
       SETCAPS(display.glCapabilities);
       scene.render();
+      //m.end();
+      //m.print();
    }
 }
 
