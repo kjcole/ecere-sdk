@@ -3091,7 +3091,7 @@ private:
                ecflagsVariations, nodeECFlagsMapping, null);
 
          GenMakePrintCustomFlags(f, "PRJ_CFLAGS", false, cflagsVariations);
-         //f.Puts("ECFLAGS += -module $(MODULE)\n");
+         f.Puts("ECFLAGS += -module $(MODULE)\n");
          GenMakePrintCustomFlags(f, "ECFLAGS", true, ecflagsVariations);
 
          if(platforms || (config && config.platforms))
@@ -3809,21 +3809,12 @@ private:
          {
             if(v == c)
             {
-               const char * content = &v ? &v : "";
-               bool isEmpty = *content == 0; //!strcmp(content, " \\\n\t ");
                if(v == 1)
-               {
-                  if(!isEmpty)
-                     f.Printf("%s +=", variableName);
-               }
+                  f.Printf("%s +=", variableName);
                else
                   f.Printf("CUSTOM%d_%s =", v-1, variableName);
-               if(!isEmpty)
-               {
-                  f.Puts(content);
-                  f.Puts("\n");
-               }
-               f.Puts("\n");
+               f.Puts(&v ? &v : "");
+               f.Puts("\n\n");
                break;
             }
          }
