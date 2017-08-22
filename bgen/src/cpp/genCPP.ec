@@ -1,6 +1,28 @@
 import "bgen"
 import "cppHardcoded"
 
+AVLTree<consttstr> tmpclincl
+{ [
+   { "eC", "Surface" },
+   { "eC", "IOChannel" },
+   { "eC", "Window" },
+   { "eC", "DataBox" },
+   { "eC", "Instance" },
+   { "eC", "Module" },
+   { "eC", "Application" },
+   { "eC", "Container" },
+   { "eC", "Array" },
+   { "eC", "CustomAVLTree" },
+   { "eC", "AVLTree" },
+   { "eC", "Map" },
+   { "eC", "LinkList" },
+   { "eC", "List" },
+   { "eC", "SerialBuffer" },
+   { "eC", "OldArray" },
+   { "eC", "" },
+   { null, null }
+] };
+
 class CPPGen : CGen
 {
    char * cppFileName;
@@ -72,7 +94,9 @@ class CPPGen : CGen
       BClass c; IterClass itc { n.ns };
       while((c = itc.next(all)))
       {
-         bool skip = c.isByte || c.isCharPtr || c.isUnInt || c.isUnichar || c.is_class || c.cl.type == systemClass;
+         bool skip = c.isBool || c.isByte || c.isCharPtr || c.isUnInt || c.isUnichar || c.is_class || c.isString || c.cl.type == systemClass;
+         if(g_.lib.ecereCOM && !tmpclincl.Find({ g_.lib.bindingName, c.name }))
+            skip = true;
          if(!skip && !c.cl.templateClass)
             processCppClass(this, c);
       }
@@ -142,6 +166,30 @@ class CPPGen : CGen
       delete path;
    }
 
+   char * allocMacroSymbolName(const bool noMacro, const MacroType type, const TypeInfo ti, const char * name, const char * name2, int ptr)
+   {
+      switch(type)
+      {
+         case C:
+            if(noMacro)    return                CopyString(name);
+            if((ti.c && ti.c.isBool) ||
+                  (ti.c && ti.c.cl.type == normalClass) ||
+                  (ti.cl && ti.cl.type == normalClass))
+                           return                CopyString(name);
+                           return PrintString(       "C(" , name, ")");
+         case CM:          return PrintString(       "CM(", name, ")");
+         case CO:          return PrintString(       "CO(", name, ")");
+         case SUBCLASS:    return PrintString( "subclass(", name, ")");
+         case THISCLASS:   return PrintString("thisclass(", name, ptr ? " *" : "", ")");
+         case T:           return getTemplateClassSymbol(   name, false);
+         case TP:          return PrintString(       "TP(", name, ", ", name2, ")");
+         case METHOD:      return PrintString(   "METHOD(", name, ", ", name2, ")");
+         case PROPERTY:    return PrintString( "PROPERTY(", name, ", ", name2, ")");
+         case M_VTBLID:    return PrintString( "M_VTBLID(", name, ", ", name2, ")");
+      }
+      return CopyString(name);
+   }
+
    void reset()
    {
       ec1terminate();
@@ -159,40 +207,59 @@ static void generateHPP(CPPGen g, File f)
    cppHeaderStart(g, f);
    if(g.lib.ecereCOM)
       cppHardcodedCore(f);
-   outputContents(f, g);
+   predefineClasses(g, f);
+   outputContents(g, f);
    cppHeaderEnd(g, f);
+}
+
+void predefineClasses(CPPGen g, File f)
+{
+   BClass c; IterAllClass itacl { itn.module = g.mod/*module = g.mod*/ };
+   f.PrintLn("");
+   while((c = itacl.next(all)))
+   {
+      bool skip = c.isBool || c.isByte || c.isCharPtr || c.isUnInt || c.isUnichar || c.is_class || c.isString || c.cl.type == systemClass;
+      if(g.lib.ecereCOM && !tmpclincl.Find({ g.lib.bindingName, c.name }))
+         skip = true;
+      if(!skip && !c.cl.templateClass)
+         f.PrintLn("class ", c.name, ";");
+   }
+   f.PrintLn("");
 }
 
 static void generateCPP(CPPGen g, File f)
 {
    Class firstClass = null;
-   f.PrintLn("#include \"", g.lib.name, ".hpp\"");
+   f.PrintLn("#include \"", g.lib.bindingName, ".hpp\"");
    f.PrintLn("");
    {
-      IterAllClass itacl { itn.module = g.mod/*module = g.mod*/ };
-      while(itacl.next(all))
+      BClass c; IterAllClass itacl { itn.module = g.mod/*module = g.mod*/ };
+      while((c = itacl.next(all)))
       {
-         Class cl = itacl.cl;
-         if(cl.type == normalClass && !cl.templateClass)
+         bool skip = c.isBool || c.isByte || c.isCharPtr || c.isUnInt || c.isUnichar || c.is_class || c.isString || c.cl.type == systemClass;
+         if(g.lib.ecereCOM && !tmpclincl.Find({ g.lib.bindingName, c.cl.name }))
+            skip = true;
+         if(!skip && c.cl.type == normalClass && !c.cl.templateClass)
          {
-            firstClass = cl;
-            f.PrintLn("TCPPClass<", cl.name, "> ", cl.name, "::_class;");
+            firstClass = c.cl;
+            f.PrintLn("TCPPClass<", c.cl.name, "> ", c.cl.name, "::_class;");
          }
       }
    }
+   f.PrintLn("");
    f.PrintLn("void ", g.lib.name, "_cpp_init(Module & module)");
    f.PrintLn("{");
    f.PrintLn("   if(!", firstClass.name, "::_class.impl)");
    f.PrintLn("   {");
    {
-      IterAllClass itacl { itn.module = g.mod/*module = g.mod*/ };
-      while(itacl.next(all))
+      BClass c; IterAllClass itacl { itn.module = g.mod/*module = g.mod*/ };
+      while((c = itacl.next(all)))
       {
-         Class cl = itacl.cl;
-         if(cl.type == normalClass && !cl.templateClass)
-         {
-            f.PrintLn("REGISTER_CPP_CLASS(", cl.name, ", module);");
-         }
+         bool skip = c.isBool || c.isByte || c.isCharPtr || c.isUnInt || c.isUnichar || c.is_class || c.isString || c.cl.type == systemClass;
+         if(g.lib.ecereCOM && !tmpclincl.Find({ g.lib.bindingName, c.cl.name }))
+            skip = true;
+         if(!skip && c.cl.type == normalClass && !c.cl.templateClass)
+            f.PrintLn("      REGISTER_CPP_CLASS(", c.cl.name, ", module);");
       }
    }
    f.PrintLn("   }");
@@ -211,14 +278,20 @@ static void processCppClass(CPPGen g, BClass c)
    int l, nameLen = 0;
    BVariant v = c;
    BNamespace n = c.nspace;
-   BClass cBase = c.cl.base;
+   // todo tofix tocheck tmp? skip to template class name for derrivation
+   BClass cBase = c.cl.base.templateClass ? c.cl.base.templateClass : c.cl.base;
    BOutput o { vclass, c = c, ds = { } };
    BMethod m; IterMethod itm { c.isInstance ? cBase.cl : c.cl };
    const char * sn = c.symbolName, * cn = c.name, * bn = cBase ? cBase.name : "";
    char * un = CopyAllCapsString(c.name);
+   bool hasBase = cBase && cBase.cl.type != systemClass;
+   bool first;
+   TypeInfo ti;
 
    c.outTypedef = o;
    n.contents.Add(v);
+   if(hasBase)
+      v.processDependency(otypedef, otypedef, cBase.cl);
 
    /*switch(c.cl.type)
    {
@@ -239,26 +312,34 @@ static void processCppClass(CPPGen g, BClass c)
       while((m = itm.next(publicVirtual)))
       {
          const char * cn = c.name, * bn = cBase.name, * mn = m.mname;
-         o.ds.printxln("#define M_VTBLID(", cn, ", ", mn, ")", spaces(nameLen, strlen(mn)), " M_VTBLID(", bn, ", ", mn, ")");
+         o.ds.printxln("#define ", cn, "_", mn, "_vTblID", spaces(nameLen, strlen(mn)), " ", bn, "_", mn, "_vTblID");
       }
    }
 
-   o.ds.printx(ln, "//#define ", c.name, "_class_registration(d) \\", ln);
+   o.ds.printx(ln, "//#define ", c.name, "_class_registration(d)"/*" \\"*/, ln);
    while((m = itm.next(publicVirtual)))
    {
       const char * on = m.name, * mn = m.mname;
-      o.ds.printx("   //REGISTER_TYPED_METHOD(\"", on, "\", ", mn, ", ", cn, ", d, int, (Class * _class, ", sn, " o, ", sn, " o2), \\", ln,
-                  "   //   o, o, return fn(*i, *(", cn, " *)INSTANCEL(o2, o2->_class)), (_class, o, o2), 1); \\", ln);
+      o.ds.printx("   //REGISTER_TYPED_METHOD(\"", on, "\", ", mn, ", ", cn, ", d, int, (Class * _class, ", sn, " o, ", sn, " o2),"/*" \\"*/, ln,
+                  "   //   o, o, return fn(*i, *(", cn, " *)INSTANCEL(o2, o2->_class)), (_class, o, o2), 1);"/*" \\"*/, ln);
    }
 
-   o.ds.printx(ln, "//#define ", un, "_VIRTUAL_METHODS(c) \\", ln);
+   o.ds.printx(ln, "#define ", un, "_VIRTUAL_METHODS(c) \\", ln);
+   first = true;
    while((m = itm.next(publicVirtual)))
    {
       const char * mn = m.mname, * tn = m.s;
-      o.ds.printx("   //VIRTUAL_METHOD(", mn, ", c, ", cn, ", \\", ln,
-                  "   //   int, c & _ARG, , c & b, \\", ln,
-                  "   //   return ", tn, "(_class.impl, self ? self->impl : (", sn, ")null, &b ? b.impl : (", sn, ")null)); \\", ln);
+      if(!first)
+         o.ds.printx(" \\", ln);
+      else
+         first = false;
+      ti = { type = m.md.dataType.returnType, md = m.md, cl = c.cl };
+      o.ds.printx("   VIRTUAL_METHOD(", mn, ", c, ", cn, ", \\", ln,
+                  "      ", (s = cppTypeName(ti)), ", c & _ARG, , c & b, \\", ln,
+                  "      return ", c.isInstance ? "Instance" : "", tn, "(_class.impl, self ? self->impl : (", sn, ")null, &b ? b.impl : (", sn, ")null));");
+      delete s;
    }
+   o.ds.printx(ln);
 
    o.ds.printx(ln, "class ", cn);
    if(cBase && cBase.cl.type != systemClass)
@@ -278,11 +359,56 @@ static void processCppClass(CPPGen g, BClass c)
    delete un;
 }
 
+char * cppTypeName(TypeInfo ti)
+{
+   char * result;
+   DynamicString z { };
+   // note: calling zTypeName creates templaton output objects with null ds
+   zTypeName(z, null, ti, { anonymous = true }, null);
+   result = CopyString(z.array);
+   delete z;
+   return result;
+/*
+   char * name = null;
+
+      SpecsList quals = null;
+
+   if(ti && ti.type)
+   {
+      int ptr = 0;
+      Type t = unwrapPointerType(ti.type, &ptr);
+      SpecialType st = specialType(t);
+      switch(st)
+      {
+         case normal:
+
+            break;
+         case baseClass:
+         case typedObject:
+         case anyObject:
+            shh();
+            break;
+      }
+   }
+   return name;
+*/
+}
+
+void cppTypeSpec(DynamicString z, const char * ident, TypeInfo ti, OptBits opt, BVariant vTop)
+{
+   TypeNameList list { };
+   astTypeName(ident, ti, opt, vTop, list);
+   ec2PrintToDynamicString(z, list, false);
+   list.Free();
+   delete list;
+}
+
+
 /*static void processNormalClass(CPPGen g, BClass c, BVariant v, BNamespace n, BOutput o)
 {
 }*/
 
-static void outputContents(File out, CPPGen g)
+static void outputContents(CPPGen g, File out)
 {
    for(nn : g.bmod.orderedNamespaces)
    {
@@ -309,7 +435,8 @@ static void outputContents(File out, CPPGen g)
          if(o.kind == vmanual || o.kind == vdefine || o.kind == vfunction ||
                o.kind == vclass || o.kind == vtemplaton || o.kind == vmethod || o.kind == vproperty)
          {
-            out.Puts(o.ds.array);
+            if(o.ds)
+               out.Puts(o.ds.array);
          }
          else check();
       }

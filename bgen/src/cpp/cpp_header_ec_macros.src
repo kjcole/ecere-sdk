@@ -71,6 +71,18 @@
 
 #define _ARG ,
 
+// VIRTUAL_METHOD(
+//    n: method name,
+//    c: class name,
+//    b: base? class name,
+//    r: return type,
+//    p0: ?,
+//    ep: ?,
+//    p: parameters (list of spec and ident pairs seperated by _ARG),
+//    d: ?
+// )
+#// //c: class object, mc: method class, m: method name, i: instance object, r: return type, p: parameters, a: arguments)
+
 #define VIRTUAL_METHOD(n, c, b, r, p0, ep, p, d) \
    struct c ## _ ## n ## _Functor \
    { \
